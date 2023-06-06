@@ -3,6 +3,8 @@ package cbs.cine_foro.service;
 import java.util.List;
 
 import cbs.cine_foro.entity.User;
+import cbs.cine_foro.error.UserAlreadyExistsException;
+import cbs.cine_foro.error.UserNotExistsException;
 
 
 public interface IUserService {
@@ -14,15 +16,15 @@ public interface IUserService {
      * from the database, at least for now
      */
     
-    public User saveUser(final User user);
+    public User saveUser(final User user) throws UserAlreadyExistsException;
 
     public List<User> getAllUsers();
 
-    public User getUserById(final Long id);
+    public User getUserById(final Long id) throws UserNotExistsException;
 
-    public User getUserByName(final String name);
+    public User getUserByName(final String name) throws UserNotExistsException;
 
-    public User updateUserName(final String originalName, final String newName);
+    public User updateUserName(final String originalName, final String newName) throws UserNotExistsException;
 
 
     

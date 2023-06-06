@@ -4,22 +4,30 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import cbs.cine_foro.entity.User;
+import cbs.cine_foro.error.UserAlreadyExistsException;
+import cbs.cine_foro.error.UserNotExistsException;
 import cbs.cine_foro.repository.UserRepo;
 
 @Service
 public class UserServiceImpl implements IUserService {
 
-    //TODO: Create Exceptions
-    //TODO: create repo!!
+    // TODO: Create Exceptions
+
     @Autowired
     private UserRepo repo;
 
     @Override
-    public User saveUser(User user) {
-        return repo.save(user); // already exist exception;
+    public User saveUser(User user) throws UserAlreadyExistsException {
+        try {
+            return repo.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserAlreadyExistsException("The User already exists in the database");
+        }
+
     }
 
     @Override
@@ -28,21 +36,23 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User getUserById(Long id) {
-        return repo.findById(id).orElse(null); // exception not found!!
+    public User getUserById(Long id) throws UserNotExistsException {
+        return repo.findById(id)
+                .orElseThrow(() -> new UserNotExistsException("The user does not exists in the database"));
     }
 
     @Override
-    public User getUserByName(String name) {
-        return repo.findByName(name).orElse(null); // exception not found!!
+    public User getUserByName(String name) throws UserNotExistsException {
+        return repo.findByName(name)
+                .orElseThrow(() -> new UserNotExistsException("The user does not exists in the database"));
     }
 
-
     @Override
-    public User updateUserName(String originalName, String newName) {
-        User user = repo.findByName(originalName).orElse(null); // execption don't exist
+    public User updateUserName(String originalName, String newName) throws UserNotExistsException {
+        User user = repo.findByName(originalName).orElseThrow(() ->
+                new UserNotExistsException("The user does not exists in the database"));
         user.setName(newName);
         return repo.save(user);
     }
-    
+
 }

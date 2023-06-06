@@ -2,6 +2,7 @@ package cbs.cine_foro.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.booleanThat;
 
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import cbs.cine_foro.entity.User;
+import cbs.cine_foro.error.UserAlreadyExistsException;
+import cbs.cine_foro.error.UserNotExistsException;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootTest
@@ -36,7 +39,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testSaveUserCorrect() {
+    void testSaveUserCorrect() throws UserAlreadyExistsException {
         for (int i = 0; i < testUsers.size(); i++) {
             User result = service.saveUser(testUsers.get(i));
             assertEquals(testUsers.get(i).getName(), result.getName());
@@ -45,6 +48,14 @@ public class UserServiceImplTest {
     }
 
     // exception already exists
+    @Test
+    void testSaveUserExisting() {
+        for (int i = 0; i < testUsers.size(); i++) {
+            final int index = i;
+            assertThrows(UserAlreadyExistsException.class,
+                        () -> service.saveUser(testUsers.get(index)));
+        }
+    }
 
     @Test
     void testGetAllUsers() {
@@ -54,7 +65,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testGetUserById() {
+    void testGetUserById() throws UserNotExistsException {
         final Long idToCheck = 1L;
         User result = service.getUserById(idToCheck);
         assertNotNull(result);
@@ -63,18 +74,40 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testGetUserByName() {
+    void testGetUserByIdNoExist() {
+        final Long idToCheck = 15554L;
+        assertThrows(UserNotExistsException.class, 
+                    () -> service.getUserById(idToCheck));  
+    }
+
+    @Test
+    void testGetUserByName() throws UserNotExistsException {
         User result = service.getUserByName(testUsers.get(0).getName());
         assertNotNull(result);
         assertEquals(testUsers.get(0).getName(), result.getName());
         System.out.println(result);
     }
+
+    @Test
+    void testGetUserByNameNotExist() {
+        final String nameToCheck = "asdaAwedqd aDad ada 51da54ads";
+        assertThrows(UserNotExistsException.class, 
+                    () -> service.getUserByName(nameToCheck));
+    }
     
     @Test
-    void testUpdateUserName() {        
+    void testUpdateUserName() throws UserNotExistsException {
         User result = service.updateUserName(testUsers.get(0).getName(), "New name for the user");
         User expected = service.getUserById(result.getUserId());
         assertEquals(expected, result);
+    }
+    
+    @Test
+    void testUpdateUserNameNotExist() {
+        final String name = "Asdad asd asd asd asd qe213";
+        final String newName = "Should not update";
+        assertThrows(UserNotExistsException.class, 
+                    () -> service.updateUserName(name, newName));           
     }
 
 
