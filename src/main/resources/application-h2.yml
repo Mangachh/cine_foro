@@ -1,0 +1,15 @@
+spring:
+    datasource:
+        url: jdbc:h2:file:./data/cine_test
+        driver-class-name: org.h2.Driver
+        username: pepo
+        password: 
+        
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: update 
+    h2:
+        console:
+            enabled: true
+            path: /console
