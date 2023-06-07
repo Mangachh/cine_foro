@@ -18,8 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import cbs.cine_foro.entity.User;
 
-@SpringBootTest
-//@DataJpaTest
+//@SpringBootTest
+@DataJpaTest
 public class UserRepoTest {
 
     @Autowired

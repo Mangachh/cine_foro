@@ -5,11 +5,14 @@ import java.util.Date;
 
 import org.hibernate.annotations.Cascade;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -39,9 +42,9 @@ public class Movie {
     private String originalTitle;
     private String spanishTitle;
     
-    @OneToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
-    private User proposedBy;
+    private User userProposed;
     private LocalDate proposedDate;
     private Float average;
 }
