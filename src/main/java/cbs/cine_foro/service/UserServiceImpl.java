@@ -15,8 +15,6 @@ import cbs.cine_foro.repository.UserRepo;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    // TODO: Create Exceptions
-
     @Autowired
     private UserRepo repo;
 
@@ -27,7 +25,6 @@ public class UserServiceImpl implements IUserService {
         } catch (DataIntegrityViolationException e) {
             throw new UserAlreadyExistsException("The User already exists in the database");
         }
-
     }
 
     @Override

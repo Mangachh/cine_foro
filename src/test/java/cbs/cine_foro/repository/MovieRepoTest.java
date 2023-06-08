@@ -34,7 +34,6 @@ public class MovieRepoTest {
     private MovieRepo repo;
 
     private User user;
-    private Long userId;
 
     @Autowired
     private UserRepo userRepo;
