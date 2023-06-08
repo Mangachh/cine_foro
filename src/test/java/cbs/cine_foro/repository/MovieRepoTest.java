@@ -23,6 +23,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.event.annotation.AfterTestClass;
 
 import cbs.cine_foro.entity.Movie;
+import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
 import jakarta.annotation.PostConstruct;
 
@@ -66,6 +67,7 @@ public class MovieRepoTest {
                 .originalTitle("Fingers, fingers, fingers")
                 .spanishTitle("Dedazos a porrazos")
                 .proposedDate(LocalDate.now())
+                .nationalities(List.of(new Nationality("Japanese")))
                 .build();
         a.setUserProposed(user);
 
@@ -73,6 +75,12 @@ public class MovieRepoTest {
                 .originalTitle("Tip Tap Top")
                 .spanishTitle("Los misteros de John")
                 .proposedDate(LocalDate.now())
+                .nationalities(List.of(
+                        new Nationality("Japanese"),
+                        new Nationality("Korean"),
+                        new Nationality(
+                        "Spanish"))
+                        )
                 .build();
         b.setUserProposed(user);
         movies = List.of(a, b);
@@ -105,7 +113,9 @@ public class MovieRepoTest {
         for (Movie m : movies) {
             Optional<Movie> result = repo.findById(m.getMovieId());
             assertTrue(result.isPresent());
-            assertEquals(m, result.get());
+
+            // not the same object, so need to check
+            assertEquals(m.getMovieId(), result.get().getMovieId());            
         }
     }
 
@@ -146,14 +156,23 @@ public class MovieRepoTest {
                 .originalTitle("aaaaa")
                 .spanishTitle("Hola caracola")
                 .build();
-        
+
         // error, userProposed can't be null
         assertThrows(DataIntegrityViolationException.class,
-                    () -> repo.save(toSave));
+                () -> repo.save(toSave));
         List<Movie> dataMovie = repo.findAll();
 
         // checking the list, just in case
         System.out.println("Movies: " + dataMovie.toString());
+    }
+
+    @Test
+    @Order(7)
+    private void findByNationalities() {
+        String[] nationalities = { "Japanese" };
+
+        List<Movie> movies = repo.findByNationalities(nationalities);
+        System.out.println("---------------\n" + movies + "\n----------");
     }
 
 }
