@@ -2,7 +2,9 @@ package cbs.cine_foro.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -19,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
+import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
 import jakarta.annotation.PostConstruct;
@@ -97,7 +100,7 @@ public class MovieServiceImplTest {
 
     @Test
     @Order(3)
-    void testGetMovieById() {
+    void testGetMovieById() throws MovieNotExistsException {
         // save new movie, easier
         Movie newMovie = Movie.builder()
                 .originalTitle("Movie to get By Id")
@@ -108,19 +111,33 @@ public class MovieServiceImplTest {
         newMovie = service.saveMovie(newMovie);
         Movie result = service.getMovieById(newMovie.getMovieId());
         assertEquals(newMovie, result);
-        this.idToDelete = result.getMovieId();
-    }
-    
-    @Test
-    @Order(4)
-    void testDeleteMovieById() {
-        service.deleteMovieById(idToDelete);
-        Movie m = service.getMovieById(idToDelete);
-        assertNull(m); // EXCEPTION!!!
+        idToDelete = result.getMovieId();
     }
 
     @Test
+    @Order(4)
+    void testGetMovieByNoExistingId() {
+        final Long id = 9999999L;
+        assertThrows(MovieNotExistsException.class, 
+                    () -> service.getMovieById(id));
+    }
+    
+    @Test
     @Order(5)
+    void testDeleteMovieById() throws MovieNotExistsException {
+        Movie m = service.getMovieById(idToDelete);
+        // check if the movie exists
+        assertNotNull(m);
+        service.deleteMovieById(idToDelete);
+
+        // delete so no exists, throws exception
+        assertThrows(MovieNotExistsException.class, 
+                () -> service.getMovieById(999999999L));
+        
+    }
+
+    @Test
+    @Order(6)
     void testGetMoviesByUser() {
         List<Movie> moviesByUser = service.getMoviesByUser(user);
         assertEquals(movies.size(), moviesByUser.size());
@@ -128,16 +145,18 @@ public class MovieServiceImplTest {
             boolean result = movies.stream().anyMatch(mm -> mm.getOriginalTitle().equals(m.getOriginalTitle()));
             assertTrue(result);
         }
-    }
-
-    
+    }    
 
     @Test
-    void testDeleteMovieByMovie() {
-        //
-        service.deleteMovieById(1L);
+    @Order(7)
+    void testDeleteMovieByMovie() throws MovieNotExistsException {
+        //check if exist
         Movie m = service.getMovieById(1L);
-        assertNull(m); // EXCEPTION!!
+        assertNotNull(m);
+        
+        service.deleteMovieById(1L);
+        assertThrows(MovieNotExistsException.class, 
+                () -> service.getMovieById(999999999L));
     }
 
    

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
+import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.repository.MovieRepo;
 
 @Service
@@ -22,8 +23,8 @@ public class MovieServiceImpl implements IMovieService {
     }
     
     @Override
-    public Movie getMovieById(final Long id) {
-        return repo.findById(id).orElse(null);
+    public Movie getMovieById(final Long id) throws MovieNotExistsException{
+        return repo.findById(id).orElseThrow(() -> new MovieNotExistsException());
     }
     
     @Override
