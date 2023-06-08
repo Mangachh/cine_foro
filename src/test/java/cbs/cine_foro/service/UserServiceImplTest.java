@@ -43,7 +43,7 @@ public class UserServiceImplTest {
         for (int i = 0; i < testUsers.size(); i++) {
             User result = service.saveUser(testUsers.get(i));
             assertEquals(testUsers.get(i).getName(), result.getName());
-            testUsers.set(i, result);
+            //testUsers.set(i, result);
         }        
     }
 
