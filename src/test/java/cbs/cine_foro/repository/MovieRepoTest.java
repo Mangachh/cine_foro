@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 
 @TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
@@ -39,7 +41,12 @@ public class MovieRepoTest {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private NationalityRepo nationRepo;
+
     private List<Movie> movies;
+    private List<String> nationNames = List.of("Japanese", "USA", "Korean", "Spanish");
+    private List<Nationality> nationalities;
 
     @PostConstruct
     void setUp() {
@@ -52,8 +59,22 @@ public class MovieRepoTest {
             user = userRepo.findById(1L).get();
         }
 
+        nationalities = new ArrayList<Nationality>();
+        nationNames.stream().forEach(n -> this.nationalities.add(
+                this.setNationalities(n)));
         this.setMoviesWithUser();
 
+    }
+
+    private Nationality setNationalities(final String nationName) {
+        Nationality n = new Nationality(nationName);
+        try {
+            n = nationRepo.save(n);
+        } catch (Exception e) {
+            n = nationRepo.findByNationName(nationName);
+        }
+
+        return n;
     }
 
     @AfterTestClass
@@ -67,7 +88,11 @@ public class MovieRepoTest {
                 .originalTitle("Fingers, fingers, fingers")
                 .spanishTitle("Dedazos a porrazos")
                 .proposedDate(LocalDate.now())
-                .nationalities(List.of(new Nationality("Japanese")))
+                // .nationalities(List.of(new Nationality("Japanese")))
+                .nationalities(List.of(
+                        this.nationalities.get(0),
+                        this.nationalities.get(2)
+                        ))
                 .build();
         a.setUserProposed(user);
 
@@ -76,11 +101,10 @@ public class MovieRepoTest {
                 .spanishTitle("Los misteros de John")
                 .proposedDate(LocalDate.now())
                 .nationalities(List.of(
-                        new Nationality("Japanese"),
-                        new Nationality("Korean"),
-                        new Nationality(
-                        "Spanish"))
-                        )
+                        this.nationalities.get(1),
+                        this.nationalities.get(3),
+                        this.nationalities.get(0)
+                        ))
                 .build();
         b.setUserProposed(user);
         movies = List.of(a, b);
@@ -115,7 +139,7 @@ public class MovieRepoTest {
             assertTrue(result.isPresent());
 
             // not the same object, so need to check
-            assertEquals(m.getMovieId(), result.get().getMovieId());            
+            assertEquals(m.getMovieId(), result.get().getMovieId());
         }
     }
 
@@ -168,11 +192,11 @@ public class MovieRepoTest {
 
     @Test
     @Order(7)
-    private void findByNationalities() {
-        String[] nationalities = { "Japanese" };
-
-        List<Movie> movies = repo.findByNationalities(nationalities);
-        System.out.println("---------------\n" + movies + "\n----------");
+    public void findByNationalities() {
+        // List<Nationality> nationalities = List.of(new Nationality("Japanese"));
+        // repo for nationalities???
+        List<Movie> mms = repo.findByNationalities(this.nationalities.get(0));
+        System.out.println("---------------\n" + mms + "\n----------");
     }
 
 }

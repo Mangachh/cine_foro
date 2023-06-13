@@ -65,8 +65,9 @@ public class Movie {
     // list of many-to-many
 
     @ManyToMany(
-            cascade = {CascadeType.PERSIST,
-                        CascadeType.MERGE },
+            cascade = {
+                       CascadeType.MERGE,
+                       CascadeType.REFRESH},
             fetch = FetchType.EAGER
     )
     @JoinColumn(
@@ -75,5 +76,6 @@ public class Movie {
         foreignKey = @ForeignKey(name = "fk_nationality_id")
     )
     private List<Nationality> nationalities;   
+    //private Nationality nationalities;
 
 }
