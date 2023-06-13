@@ -3,6 +3,7 @@ package cbs.cine_foro.service;
 import java.util.List;
 
 import cbs.cine_foro.entity.Nationality;
+import cbs.cine_foro.error.NationalityNotExistsException;
 
 public interface INationService {
 
@@ -10,7 +11,7 @@ public interface INationService {
     
     List<Nationality> getAllNationalities();
 
-    Nationality geNationalityByName(final String name);
+    Nationality getNationalityByName(final String name) throws NationalityNotExistsException;
 
     void removeNationality(final Nationality nationality);
 

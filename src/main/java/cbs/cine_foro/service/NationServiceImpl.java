@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cbs.cine_foro.entity.Nationality;
+import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.repository.NationalityRepo;
+import jakarta.transaction.Transactional;
 
 @Service
 public class NationServiceImpl implements INationService {
@@ -25,8 +27,13 @@ public class NationServiceImpl implements INationService {
     }
 
     @Override
-    public Nationality geNationalityByName(String name) {
-        return repo.findByNationName(name); //exception?s
+    public Nationality getNationalityByName(String name) throws NationalityNotExistsException {
+        Nationality n = repo.findByNationName(name);
+        if (n == null) {
+            throw new NationalityNotExistsException();
+        }
+
+        return n;
     }
 
     @Override
@@ -35,6 +42,7 @@ public class NationServiceImpl implements INationService {
     }
 
     @Override
+    @Transactional
     public void removeNationalityByName(String name) {
         repo.deleteByNationName(name); // exception?
     }
