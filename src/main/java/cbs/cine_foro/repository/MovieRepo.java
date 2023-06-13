@@ -12,7 +12,9 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
     
     public List<Movie> findByUserProposed(final User user);
 
-    public List<Movie> findByNationalities(final Nationality nationality);
+    public List<Movie> findAllByNationalities(final Nationality nationality);
+
+    public List<Movie> findAllByNationalitiesNationName(final String nationality);
 
     
 

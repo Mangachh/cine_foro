@@ -49,4 +49,15 @@ public class MovieServiceImpl implements IMovieService {
         return repo.findAll();
     }
 
+    @Override
+    public List<Movie> getMoviesByNationality(String nationName) throws MovieNotExistsException {
+        // exception not movie found?
+        List<Movie> movies = repo.findAllByNationalitiesNationName(nationName);
+        if (movies == null || movies.size() == 0) {
+            throw new MovieNotExistsException();
+        }
+
+        return movies;
+    }
+
 }

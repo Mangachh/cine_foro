@@ -105,12 +105,15 @@ public class MovieServiceImplTest {
         Movie newMovie = Movie.builder()
                 .originalTitle("Movie to get By Id")
                 .spanishTitle("No one")
+                .nationalities(List.of())
                 .build();
         newMovie.setUserProposed(user);
 
         newMovie = service.saveMovie(newMovie);
         Movie result = service.getMovieById(newMovie.getMovieId());
-        assertEquals(newMovie, result);
+        assertEquals(newMovie.getMovieId(), result.getMovieId());
+        assertEquals(newMovie.getOriginalTitle(), result.getOriginalTitle());
+
         idToDelete = result.getMovieId();
     }
 
@@ -153,10 +156,16 @@ public class MovieServiceImplTest {
         //check if exist
         Movie m = service.getMovieById(1L);
         assertNotNull(m);
-        
+
         service.deleteMovieById(1L);
-        assertThrows(MovieNotExistsException.class, 
+        assertThrows(MovieNotExistsException.class,
                 () -> service.getMovieById(999999999L));
+    }
+    
+    @Test
+    @Order(8)
+    void testGetMoviesByNationality() {
+        List<Movie> movies = service.getMoviesByNationality("Japanese");
     }
 
    

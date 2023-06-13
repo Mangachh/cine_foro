@@ -144,7 +144,27 @@ public class MovieRepoTest {
     }
 
     @Test
-    @Order(4)
+    @Order(4 )
+    public void findByNationalities() {
+        // List<Nationality> nationalities = List.of(new Nationality("Japanese"));
+        List<Movie> mms = repo.findAllByNationalities(this.nationalities.get(0));
+        System.out.println("---------------\n" + mms + "\n----------");
+        assertTrue(mms.size() == 2);
+
+    }
+    
+    @Test
+    @Order(5)
+    public void findByNationalityName() {
+        // List<Nationality> nationalities = List.of(new Nationality("Japanese"));
+        // repo for nationalities???
+        List<Movie> mms = repo.findAllByNationalitiesNationName("Japanese");       
+        System.out.println("**************\n" + mms + "\n**************");
+        assertTrue(mms.size() == 2);
+        
+    }
+    @Test
+    @Order(6)
     void removeMovie() {
         Movie toDelete = repo.findById(1L).get();
         repo.delete(toDelete);
@@ -152,7 +172,7 @@ public class MovieRepoTest {
     }
 
     @Test
-    @Order(5)
+    @Order(7)
     void saveMovieUserNotExists() {
         User u = new User("Not exists");
 
@@ -174,7 +194,7 @@ public class MovieRepoTest {
     }
 
     @Test
-    @Order(6)
+    @Order(8)
     void saveMovieUserNull() {
         Movie toSave = Movie.builder()
                 .originalTitle("aaaaa")
@@ -190,13 +210,6 @@ public class MovieRepoTest {
         System.out.println("Movies: " + dataMovie.toString());
     }
 
-    @Test
-    @Order(7)
-    public void findByNationalities() {
-        // List<Nationality> nationalities = List.of(new Nationality("Japanese"));
-        // repo for nationalities???
-        List<Movie> mms = repo.findByNationalities(this.nationalities.get(0));
-        System.out.println("---------------\n" + mms + "\n----------");
-    }
+    
 
 }

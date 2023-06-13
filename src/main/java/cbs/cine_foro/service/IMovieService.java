@@ -20,4 +20,6 @@ public interface IMovieService {
 
     public void deleteMovieById(final Long id);
 
+    public List<Movie> getMoviesByNationality(final String nation) throws MovieNotExistsException;
+
 }
