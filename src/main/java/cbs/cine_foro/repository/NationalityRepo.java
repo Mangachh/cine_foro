@@ -7,4 +7,6 @@ public interface NationalityRepo extends JpaRepository<Nationality, Long> {
     
     public Nationality findByNationName(final String name);
 
+    public void deleteByNationName(final String name);
+
 }
