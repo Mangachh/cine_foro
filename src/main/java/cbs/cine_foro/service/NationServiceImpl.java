@@ -42,7 +42,6 @@ public class NationServiceImpl implements INationService {
     }
 
     @Override
-    @Transactional
     public void removeNationalityByName(String name) {
         repo.deleteByNationName(name); // exception?
     }
