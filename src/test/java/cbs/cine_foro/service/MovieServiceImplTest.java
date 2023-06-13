@@ -35,6 +35,8 @@ public class MovieServiceImplTest {
 
     @Autowired
     private IUserService userService;
+
+    // mmmm, didn't do the nationality service...
     
     private User user;
 
@@ -164,8 +166,10 @@ public class MovieServiceImplTest {
     
     @Test
     @Order(8)
-    void testGetMoviesByNationality() {
-        List<Movie> movies = service.getMoviesByNationality("Japanese");
+    void testGetMoviesByNationalityNoExist(){
+        assertThrows(MovieNotExistsException.class, 
+                () -> service.getMoviesByNationality("PepoteNation"));
+        
     }
 
    
