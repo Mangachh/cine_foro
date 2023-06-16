@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.repository.NationalityRepo;
-import jakarta.transaction.Transactional;
 
 @Service
 public class NationServiceImpl implements INationService {

@@ -10,7 +10,7 @@ import cbs.cine_foro.entity.User;
 
 public interface MovieRepo extends JpaRepository<Movie, Long> {
     
-    public List<Movie> findByUserProposed(final User user);
+    public List<Movie> findAllByUserProposed(final User user);
 
     public List<Movie> findAllByNationalities(final Nationality nationality);
 

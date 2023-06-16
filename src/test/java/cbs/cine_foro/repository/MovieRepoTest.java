@@ -122,7 +122,7 @@ public class MovieRepoTest {
     @Test
     @Order(2)
     void findMoviesByUser() {
-        List<Movie> resultList = repo.findByUserProposed(user);
+        List<Movie> resultList = repo.findAllByUserProposed(user);
         System.out.println("----------------------------");
         System.out.println(movies);
         System.out.println(user);

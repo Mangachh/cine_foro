@@ -29,7 +29,7 @@ public class MovieServiceImpl implements IMovieService {
     
     @Override
     public List<Movie> getMoviesByUser(final User user) {
-        return repo.findByUserProposed(user);
+        return repo.findAllByUserProposed(user);
     }
 
     // average and sooo

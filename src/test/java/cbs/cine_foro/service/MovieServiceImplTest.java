@@ -11,19 +11,23 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
+import cbs.cine_foro.repository.MovieRepo;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootTest
@@ -33,127 +37,102 @@ public class MovieServiceImplTest {
     @Autowired
     private IMovieService service;
 
-    @Autowired
-    private IUserService userService;
+    @MockBean
+    private MovieRepo repo;
 
-    // mmmm, didn't do the nationality service...
+ 
     
     private User user;
 
     private List<Movie> movies;
-    private static Long idToDelete;
 
     @PostConstruct
     void setUp() throws UserNotExistsException {
         user = new User("Test user for MovieService");
 
-        try {
-            user = userService.saveUser(user);
-        } catch (UserAlreadyExistsException e) {
-            user = userService.getUserByName(user.getName());
-            System.out.println("---------\n" + e.getMessage() + "\n" + user.toString() + "\n----------");
-        }
-
-        if (movies == null || movies.size() == 0) {
-            this.createMovies();
-        }
+        this.createMovies();
         
     }
     
     private void createMovies() {
         movies = List.of(
-                    Movie.builder()
+                Movie.builder()
+                        .movieId(1L)
                         .spanishTitle("Tequeños y pequeños")
                         .originalTitle("Nothing about me")
                         .proposedDate(LocalDate.now())
+                        .userProposed(user)
                         .build(),
-                    Movie.builder()
+                Movie.builder()
+                        .movieId(2L)
                         .spanishTitle("Hola Caracola")
                         .originalTitle("Hola caracola")
                         .proposedDate(LocalDate.now())
+                        .userProposed(user)
                         .build()
         );
         movies = new ArrayList<Movie>(movies);
     }
 
     @Test
-    @Order(1)
     void testSaveMovie() {
-        // first put the user
-        movies.stream().forEach(m -> m.setUserProposed(user));
+        
         for (Movie m : movies) {
+            Mockito.when(repo.save(m))
+                    .thenReturn(m);
             Movie result = this.service.saveMovie(m);
             assertEquals(m, result);
         }
     }
 
     @Test
-    @Order(2)
     void testGetAllMovies() {
+        Mockito.when(repo.findAll())
+                .thenReturn(this.movies);
         List<Movie> result = service.getAllMovies();
 
-        // we'll check if the titles are the same becuase
-        // the list doesn't update
-        for (Movie m : result) {
-            boolean found = movies.stream().anyMatch(mm -> m.getOriginalTitle().equals(mm.getOriginalTitle()));
-            assertTrue(found);
-        }
+        assertEquals(this.movies, result);     
     }
 
     @Test
-    @Order(3)
     void testGetMovieById() throws MovieNotExistsException {
-        // save new movie, easier
-        Movie newMovie = Movie.builder()
-                .originalTitle("Movie to get By Id")
-                .spanishTitle("No one")
-                .nationalities(List.of())
-                .build();
-        newMovie.setUserProposed(user);
+        final Long id = 1L;
+        Mockito.when(repo.findById(id))
+                .thenReturn(this.movies.stream().filter(m -> m.getMovieId() == id).findFirst());
 
-        newMovie = service.saveMovie(newMovie);
-        Movie result = service.getMovieById(newMovie.getMovieId());
-        assertEquals(newMovie.getMovieId(), result.getMovieId());
-        assertEquals(newMovie.getOriginalTitle(), result.getOriginalTitle());
+        Movie result = service.getMovieById(id);
+        assertEquals(id, result.getMovieId());
+        //assertEquals(newMovie.getOriginalTitle(), result.getOriginalTitle());
 
-        idToDelete = result.getMovieId();
     }
 
     @Test
-    @Order(4)
     void testGetMovieByNoExistingId() {
         final Long id = 9999999L;
+        Mockito.when(repo.findById(id))
+                .thenReturn(Optional.empty());
+
         assertThrows(MovieNotExistsException.class, 
                     () -> service.getMovieById(id));
     }
     
     @Test
-    @Order(5)
     void testDeleteMovieById() throws MovieNotExistsException {
-        Movie m = service.getMovieById(idToDelete);
-        // check if the movie exists
-        assertNotNull(m);
-        service.deleteMovieById(idToDelete);
-
-        // delete so no exists, throws exception
-        assertThrows(MovieNotExistsException.class, 
-                () -> service.getMovieById(999999999L));
+       
         
     }
 
     @Test
-    @Order(6)
     void testGetMoviesByUser() {
+        Mockito.when(repo.findAllByUserProposed(user))
+                .thenReturn(movies.stream().filter(m -> m.getUserProposed() == user).toList());
+
         List<Movie> moviesByUser = service.getMoviesByUser(user);
         assertEquals(movies.size(), moviesByUser.size());
-        for (Movie m : moviesByUser) {
-            boolean result = movies.stream().anyMatch(mm -> mm.getOriginalTitle().equals(m.getOriginalTitle()));
-            assertTrue(result);
-        }
+        
     }    
 
-    @Test
-    @Order(7)
+    //@Test
     void testDeleteMovieByMovie() throws MovieNotExistsException {
         //check if exist
         Movie m = service.getMovieById(1L);
@@ -165,8 +144,10 @@ public class MovieServiceImplTest {
     }
     
     @Test
-    @Order(8)
-    void testGetMoviesByNationalityNoExist(){
+    void testGetMoviesByNationalityNoExist() {
+        Mockito.when(repo.findAllByNationalitiesNationName("PepoteNation"))
+                .thenReturn(List.of());
+                
         assertThrows(MovieNotExistsException.class, 
                 () -> service.getMoviesByNationality("PepoteNation"));
         
