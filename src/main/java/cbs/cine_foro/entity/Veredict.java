@@ -49,9 +49,8 @@ public class Veredict {
 
     private Long veredictId;
     @ManyToOne(cascade = {
-                       CascadeType.MERGE,
                        CascadeType.REFRESH},
-               fetch = FetchType.LAZY)
+               fetch = FetchType.EAGER)
     @JoinColumn(name="movie_id", 
             foreignKey = @ForeignKey(name = "fk_veredict_movie_id"),
                          referencedColumnName = "MOVIE_ID")

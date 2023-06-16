@@ -54,11 +54,16 @@ public class VeredictRepoTest {
         try {
             userRepo.saveAll(users);
         } catch (Exception e) {
-            System.out.println("Errooooooor");
+            users = userRepo.findAll();
         }
     }
 
     void initMovie() {
+        movie = movieRepo.findById(1L).orElse(null);
+
+        if (movie != null)
+            return;
+            
         movie = Movie.builder()
                 .originalTitle("Fingers crossed")
                 .spanishTitle("La suerte del pringao")
@@ -148,18 +153,40 @@ public class VeredictRepoTest {
     @Order(3)
     void saveVeredictWithVeredictRepeatedIDS() {
         VeredictUser userOne = VeredictUser.builder()
-                .userId(users.get(0))
+                //.userId(users.get(0))
                 .score(7f)
                 .bestMoment("Cuando se caen")
                 .worstMoment("El final es horrible")
                 .widow("La sombra detrás a puerta")
                 .build();
+        userOne.setUserId(users.get(0));
 
         Veredict veredict = Veredict.builder()
                 .movieId(movie)
                 .veredicts(userOne)
                 .build();
+        List<Movie> movies = movieRepo.findAll();
 
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(veredict));
     }
+    
+    @Test
+    @Order(5)
+    void findAllVeredicts() {
+        List<Veredict> veredicts = repo.findAll();
+        assertEquals(2, veredicts.size());
+    }
+
+    @Test
+    @Order(6)
+    void findAllByUserId() {
+        List<Veredict> veredicts = repo.findAllByUserId(2L);
+        assertEquals(veredicts.size(), 1);
+    }
+
+    // delete veredict
+
+    // update vereict
+
+    // and don't know what else
 }

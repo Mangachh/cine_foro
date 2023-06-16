@@ -25,7 +25,7 @@ public class VeredictUser {
     @ManyToOne(cascade = {
                        CascadeType.MERGE,
                        CascadeType.REFRESH},
-               fetch = FetchType.LAZY)
+               fetch = FetchType.EAGER)
     @JoinColumn(name="user_id", 
                 foreignKey = @ForeignKey(name = "fk_veredict_user_id"),
                             referencedColumnName = "user_id")
