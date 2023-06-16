@@ -53,6 +53,7 @@ public class VeredictRepoTest {
 
         try {
             userRepo.saveAll(users);
+            users = userRepo.findAll();
         } catch (Exception e) {
             users = userRepo.findAll();
         }
@@ -93,7 +94,7 @@ public class VeredictRepoTest {
                 .worstMoment("El final es horrible")
                 .widow("La sombra detrás a puerta")
                 .build();
-            //userOne.setUserId(users.get(0));
+            userOne.setUserId(users.get(0));
 
         VeredictUser userTwo = VeredictUser.builder()
                 //.userId(users.get(1))
@@ -102,7 +103,7 @@ public class VeredictRepoTest {
                 .worstMoment("La música")
                 .widow("Comer burritos durante el tiroteo")
                 .build();
-            //userTwo.setUserId(users.get(1));
+            userTwo.setUserId(users.get(1));
         Veredict veredict = Veredict.builder()
                 .movieId(movie)
                 .veredicts(userTwo)
