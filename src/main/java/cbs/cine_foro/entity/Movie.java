@@ -24,6 +24,8 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,7 +50,8 @@ public class Movie {
     @GeneratedValue(
         strategy = GenerationType.SEQUENCE,
         generator = "movie_sequence"
-    )    
+    )
+    @Column(name = "movie_id")
     private Long movieId;
     private String originalTitle;
     private String spanishTitle;
@@ -56,8 +59,9 @@ public class Movie {
     @ManyToOne(optional = false)
     @JoinColumn(
         name = "user_id",
-        foreignKey = @ForeignKey(name = "fk_user_id"),
-        referencedColumnName = "user_id")
+        foreignKey = @ForeignKey(name = "fk_movie_user_id"),
+            referencedColumnName = "user_id")
+
     private User userProposed;
     private LocalDate proposedDate;
     private Float average;

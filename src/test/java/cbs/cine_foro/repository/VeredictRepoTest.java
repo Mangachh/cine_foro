@@ -1,8 +1,15 @@
 package cbs.cine_foro.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -10,47 +17,115 @@ import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
 import cbs.cine_foro.entity.VeredictUser;
+import jakarta.annotation.PostConstruct;
 
 @SpringBootTest
+@TestMethodOrder(OrderAnnotation.class)
 public class VeredictRepoTest {
 
     @Autowired
     private VeredictRepo repo;
 
-    @Test
-    void saveVeredictWithVeredictUser() {
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private MovieRepo movieRepo;
+
+    private List<Veredict> veredicts;
+
+    private List<User> users;
+
+    private Movie movie;
+
+    @PostConstruct
+    void init() {
+        this.initUsers();
+        this.initMovie();
+        this.initVeredicts();
+
+    }
+
+    void initUsers() {
+        users = List.of(
+                new User("Pepote"),
+                new User("Mariela"));
+
+        try {
+            userRepo.saveAll(users);
+        } catch (Exception e) {
+            System.out.println("Errooooooor");
+        }
+    }
+
+    void initMovie() {
+        movie = Movie.builder()
+                .originalTitle("Fingers crossed")
+                .spanishTitle("La suerte del pringao")
+                .build();
+        movie.setUserProposed(users.get(0));
+        
+        try{
+            movieRepo.save(movie);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("*********************************");
+            movie = movieRepo.findById(1L).get();
+        }
+    }
+
+    void initVeredicts() {
+        if (veredicts != null && veredicts.size() > 0) {
+            return;
+        }
+
+        veredicts = new ArrayList<>();
+        
         VeredictUser userOne = VeredictUser.builder()
-                .userId(User.builder().userId(1L).build())
+                //.userId(users.get(0))
                 .score(7f)
                 .bestMoment("Cuando se caen")
                 .worstMoment("El final es horrible")
                 .widow("La sombra detrás a puerta")
                 .build();
+            //userOne.setUserId(users.get(0));
 
         VeredictUser userTwo = VeredictUser.builder()
-                .userId(User.builder().userId(2L).build())
+                //.userId(users.get(1))
                 .score(6f)
                 .bestMoment("El malo muere")
                 .worstMoment("La música")
                 .widow("Comer burritos durante el tiroteo")
                 .build();
-
+            //userTwo.setUserId(users.get(1));
         Veredict veredict = Veredict.builder()
-                .movieId(Movie.builder().movieId(1L).build())
+                .movieId(movie)
                 .veredicts(userTwo)
                 .build();
 
-        repo.save(veredict);
+        veredicts.add(veredict);
+
         veredict = Veredict.builder()
-                .movieId(Movie.builder().movieId(1L).build())
+                .movieId(movie)
                 .veredicts(userOne)
                 .build();
 
-        repo.save(veredict);
+        veredicts.add(veredict);
 
     }
 
     @Test
+    @Order(1)
+    void saveVeredict() {
+        for (Veredict v : veredicts) {
+            Veredict result = repo.save(v);
+            assertEquals(v.getVeredictId(), result.getVeredictId());
+        }
+    }
+    
+
+    @Test
+    @Order(2)
     void saveVeredictWithVeredictUserIdWrong() {
         VeredictUser userOne = VeredictUser.builder()
                 .userId(User.builder().userId(69L).build())
@@ -66,13 +141,14 @@ public class VeredictRepoTest {
                 .build();
 
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(veredict));
-        //repo.save(veredict); // exception
+        // repo.save(veredict); // exception
     }
-    
+
     @Test
+    @Order(3)
     void saveVeredictWithVeredictRepeatedIDS() {
         VeredictUser userOne = VeredictUser.builder()
-                .userId(User.builder().userId(2L).build())
+                .userId(users.get(0))
                 .score(7f)
                 .bestMoment("Cuando se caen")
                 .worstMoment("El final es horrible")
@@ -80,10 +156,10 @@ public class VeredictRepoTest {
                 .build();
 
         Veredict veredict = Veredict.builder()
-                .movieId(Movie.builder().movieId(1L).build())
+                .movieId(movie)
                 .veredicts(userOne)
                 .build();
-        
+
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(veredict));
     }
 }

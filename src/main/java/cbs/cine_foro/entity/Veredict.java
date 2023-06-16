@@ -2,8 +2,11 @@ package cbs.cine_foro.entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,8 +30,8 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "veredicts",
         uniqueConstraints = @UniqueConstraint(
-        name = "unique_movie_user",
-        columnNames = {"movie_id", "user_id"}
+            name = "unique_movie_user",
+            columnNames = {"movie_id", "user_id"}
     )
 )
 public class Veredict {
@@ -45,8 +48,13 @@ public class Veredict {
     )
 
     private Long veredictId;
-    @ManyToOne
-    @JoinColumn(name="movie_id")
+    @ManyToOne(cascade = {
+                       CascadeType.MERGE,
+                       CascadeType.REFRESH},
+               fetch = FetchType.LAZY)
+    @JoinColumn(name="movie_id", 
+            foreignKey = @ForeignKey(name = "fk_veredict_movie_id"),
+                         referencedColumnName = "MOVIE_ID")
     private Movie movieId;
 
     // esto puede ir a otra clase y hacer un embded? sip
