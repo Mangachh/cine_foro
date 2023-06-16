@@ -1,14 +1,8 @@
 package cbs.cine_foro.entity;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Type;
-import org.hibernate.type.ListType;
-
-import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,22 +14,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -64,7 +55,9 @@ public class Movie {
 
     private User userProposed;
     private LocalDate proposedDate;
-    private Float average;
+
+    @Transient
+    private float average;
     private String releaseYear;
     // list of many-to-many
 
@@ -72,14 +65,30 @@ public class Movie {
             cascade = {
                        CascadeType.MERGE,
                        CascadeType.REFRESH},
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @JoinColumn(
         name = "nationality_id",
         referencedColumnName = "natioality_id",
         foreignKey = @ForeignKey(name = "fk_nationality_id")
     )
-    private List<Nationality> nationalities;   
-    //private Nationality nationalities;
+    private List<Nationality> nationalities;
+    
+    @OneToMany(
+            mappedBy = "movieId", 
+            cascade = { CascadeType.REFRESH,
+                        CascadeType.REMOVE },
+            fetch = FetchType.EAGER,
+        orphanRemoval = true)
+    private List<Veredict> veredicts;
+    
+    public float getAverage(){
+        if(nationalities == null || nationalities.size() == 0)
+            return -1f;
+
+        return (float)veredicts.stream().mapToDouble(v -> v.getVeredicts().getScore()).sum() / veredicts.size();        
+    }
+
+
 
 }

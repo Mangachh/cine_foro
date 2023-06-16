@@ -10,7 +10,16 @@ import cbs.cine_foro.entity.Veredict;
 public interface VeredictRepo extends JpaRepository<Veredict, Long> {
     
     @Query(
-        value = "SELECT * FROM veredicts vs WHERE vs.user_id = ?",
+        value = "SELECT * FROM veredicts vs WHERE vs.user_id = ?1",
         nativeQuery = true)
     List<Veredict> findAllByUserId(Long userId);
+
+    @Query(
+        value = "SELECT * FROM veredicts vs WHERE vs.movie_id = ?1",
+        nativeQuery = true)
+    List<Veredict> findAllByMovieId(Long movieId);
+
+    
+
+    
 }

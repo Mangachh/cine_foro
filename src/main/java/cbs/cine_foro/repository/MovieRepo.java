@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
+import cbs.cine_foro.entity.Veredict;
 
 public interface MovieRepo extends JpaRepository<Movie, Long> {
     
@@ -16,6 +17,8 @@ public interface MovieRepo extends JpaRepository<Movie, Long> {
 
     public List<Movie> findAllByNationalitiesNationName(final String nationality);
 
-    
+    List<Veredict> findAllByOriginalTitleContainingIgnoreCase(final String contains);
+
+    List<Veredict> findAllByspanishTitleContainingIgnoreCase(final String contains);
 
 }

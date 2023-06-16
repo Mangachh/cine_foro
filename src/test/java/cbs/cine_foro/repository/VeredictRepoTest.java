@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -172,22 +172,33 @@ public class VeredictRepoTest {
     }
     
     @Test
-    @Order(5)
+    @Order(4)
     void findAllVeredicts() {
-        List<Veredict> veredicts = repo.findAll();
-        assertEquals(2, veredicts.size());
+        List<Veredict> ll = repo.findAll();
+        assertEquals(2, ll.size());
+        System.out.println("**********************");
+        System.out.println(ll);
+        System.out.println("**********************");
     }
 
     @Test
-    @Order(6)
+    @Order(5)
     void findAllByUserId() {
         List<Veredict> veredicts = repo.findAllByUserId(2L);
         assertEquals(veredicts.size(), 1);
     }
 
-    // delete veredict
+    @Test
+    @Order(6)
+    void findAllByMovieId() {
+        List<Veredict> veredicts = repo.findAllByMovieId(1L);
+        assertEquals(2, veredicts.size());
+    }
 
-    // update vereict
+    // delete veredict
+    
+
+    // update veredict
 
     // and don't know what else
 }

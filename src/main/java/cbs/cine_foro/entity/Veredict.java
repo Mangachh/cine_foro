@@ -1,7 +1,5 @@
 package cbs.cine_foro.entity;
 
-import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -12,8 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -49,8 +45,7 @@ public class Veredict {
 
     private Long veredictId;
     @ManyToOne(cascade = {
-                       CascadeType.REFRESH},
-               fetch = FetchType.EAGER)
+                       CascadeType.REFRESH})
     @JoinColumn(name="movie_id", 
             foreignKey = @ForeignKey(name = "fk_veredict_movie_id"),
                          referencedColumnName = "MOVIE_ID")
