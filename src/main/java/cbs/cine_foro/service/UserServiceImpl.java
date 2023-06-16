@@ -47,7 +47,8 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User updateUserName(String originalName, String newName) throws UserNotExistsException {
         User user = repo.findByName(originalName).orElseThrow(() ->
-                new UserNotExistsException("The user does not exists in the database"));
+                                    new UserNotExistsException());
+                
         user.setName(newName);
         return repo.save(user);
     }

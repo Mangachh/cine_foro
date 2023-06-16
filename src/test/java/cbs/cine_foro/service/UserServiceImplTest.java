@@ -7,77 +7,87 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.booleanThat;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeAll;
+import javax.swing.text.html.Option;
+
+import org.hibernate.annotations.ResultCheckStyle;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
+import cbs.cine_foro.repository.UserRepo;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootTest
-@TestMethodOrder(OrderAnnotation.class)
 public class UserServiceImplTest {
+    // TODO: change to mockito?
 
-    
     @Autowired
     private IUserService service;
+
+    @MockBean
+    private UserRepo repo;
 
     private static List<User> testUsers;
 
     @PostConstruct
     void createUser() {
         testUsers = List.of(
-            new User("Tazón de chocolate"),
-            new User("Pirolito"),
-            new User("Lipichún")
-        );
-        //testUser = new User("Tazón de chocolate");
+                new User(1L,"Tazón de chocolate"),
+                new User(2L, "Pirolito"),
+                new User(3L, "Lipichún"));
     }
 
     @Test
-    @Order(1)
     void testSaveUserCorrect() throws UserAlreadyExistsException {
         for (int i = 0; i < testUsers.size(); i++) {
+            Mockito.when(repo.save(testUsers.get(i)))
+                    .thenReturn(testUsers.get(i));
+
             User result = service.saveUser(testUsers.get(i));
             assertEquals(testUsers.get(i).getName(), result.getName());
-            //testUsers.set(i, result);
-        }        
+        }
     }
 
     // exception already exists
     @Test
-    @Order(2)
     void testSaveUserExisting() {
-        List<User> users = service.getAllUsers();
-        System.out.println(users);
-        for (int i = 0; i < testUsers.size(); i++) {
-            final int index = i;
-            assertThrows(UserAlreadyExistsException.class,
-                        () -> service.saveUser(testUsers.get(index)));
-        }
-    }
+
+        Mockito.when(repo.save(testUsers.get(0)))
+                .thenAnswer(i -> {
+                    throw new DataIntegrityViolationException("Data integrity error");}); // aquí va el jpa exception ese
+
+        assertThrows(UserAlreadyExistsException.class,
+                () -> service.saveUser(testUsers.get(0)));
+
+    }    
 
     @Test
-    @Order(3)
     void testGetAllUsers() {
+        Mockito.when(repo.findAll())
+                .thenReturn(testUsers);
+
         List<User> users = service.getAllUsers();
         System.out.println(users);
         assertTrue(users.size() > 0);
     }
 
     @Test
-    @Order(4)
     void testGetUserById() throws UserNotExistsException {
-        final Long idToCheck = 1L;
+        final Long idToCheck = testUsers.get(0).getUserId();
+        Mockito.when(repo.findById(idToCheck))
+                .thenReturn(Optional.of(testUsers.get(0)));
+
         User result = service.getUserById(idToCheck);
         assertNotNull(result);
         assertEquals(idToCheck, result.getUserId());
@@ -85,16 +95,20 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @Order(5)
     void testGetUserByIdNoExist() {
         final Long idToCheck = 15554L;
-        assertThrows(UserNotExistsException.class, 
-                    () -> service.getUserById(idToCheck));  
+        Mockito.when(repo.findById(idToCheck))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotExistsException.class,
+                () -> service.getUserById(idToCheck));
     }
 
     @Test
-    @Order(6)
     void testGetUserByName() throws UserNotExistsException {
+        Mockito.when(repo.findByName(testUsers.get(0).getName()))
+                .thenReturn(Optional.of(testUsers.get(0)));
+
         User result = service.getUserByName(testUsers.get(0).getName());
         assertNotNull(result);
         assertEquals(testUsers.get(0).getName(), result.getName());
@@ -102,27 +116,38 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @Order(7)
     void testGetUserByNameNotExist() {
         final String nameToCheck = "asdaAwedqd aDad ada 51da54ads";
-        assertThrows(UserNotExistsException.class, 
-                    () -> service.getUserByName(nameToCheck));
+        Mockito.when(repo.findByName(nameToCheck))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserNotExistsException.class,
+                () -> service.getUserByName(nameToCheck));
     }
-    
+
     @Test
-    @Order(8)
     void testUpdateUserName() throws UserNotExistsException {
-        User result = service.updateUserName(testUsers.get(0).getName(), "New name for the user");
-        User expected = service.getUserById(result.getUserId());
-        assertEquals(expected, result);
+        final String newName = "New name for the user";
+
+        Mockito.when(repo.findByName(testUsers.get(0).getName()))
+                .thenReturn(Optional.of(testUsers.get(0)));
+
+        Mockito.when(repo.save(testUsers.get(0)))
+                .thenReturn(testUsers.get(0));
+
+        User result = service.updateUserName(testUsers.get(0).getName(), newName);
+        //User expected = service.getUserById(result.getUserId());
+        assertEquals(result.getName(), newName);
     }
-    
+
     @Test
-    @Order(9)
     void testUpdateUserNameNotExist() {
         final String name = "Asdad asd asd asd asd qe213";
         final String newName = "Should not update";
-        assertThrows(UserNotExistsException.class, 
-                    () -> service.updateUserName(name, newName));           
-    }    
+        Mockito.when(repo.findByName(name))
+            .thenReturn(Optional.empty());
+            
+        assertThrows(UserNotExistsException.class,
+                () -> service.updateUserName(name, newName));
+    }
 }
