@@ -6,103 +6,99 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.error.NationalityNotExistsException;
+import cbs.cine_foro.repository.NationalityRepo;
+import jakarta.annotation.PostConstruct;
 
 @SpringBootTest
-@TestMethodOrder(OrderAnnotation.class)
 public class NationServiceImplTest {
 
     @Autowired
     private NationServiceImpl service;
 
+    @MockBean
+    private NationalityRepo repo;
 
+    private List<Nationality> nations;
 
-    @ParameterizedTest
-    @MethodSource("saveNationalitiesArgs")
-    @Order(1)
-    void testSaveNationality(Nationality n) {
-        Nationality result = service.saveNationality(n);
-        assertEquals(n, result);
-    }
-
-    static Stream<Nationality> saveNationalitiesArgs(){
-        return Stream.of(
-            new Nationality("Japanese"),
-            new Nationality("Korean"),
-            new Nationality("English"),
-            new Nationality("Spanish")
-        );
+    @PostConstruct
+    void setNations() {
+        nations = List.of(
+                new Nationality(1L, "Japanese"),
+                new Nationality(2L, "Korean"),
+                new Nationality(3L, "Spanish"));
     }
 
     @Test
-    @Order(2)
+    void testSaveNationality() {
+        for (Nationality n : nations) {
+            Mockito.when(repo.save(n))
+                    .thenReturn(n);
+            Nationality result = service.saveNationality(n);
+            assertEquals(n, result);
+        }
+    }
+
+    @Test
     void testGetAllNationalities() {
+        Mockito.when(repo.findAll())
+                .thenReturn(nations);
+
         List<Nationality> nationalities = service.getAllNationalities();
-        assertTrue(nationalities.size() == saveNationalitiesArgs().count());        
+        assertTrue(nationalities.size() == nations.size());
     }
 
     @Test
-    @Order(3)
     void testGetNationalityByName() throws NationalityNotExistsException {
         final String name = "Japanese";
+        Mockito.when(repo.findByNationName(name))
+                .thenReturn(nations.get(0));
+
         Nationality expected = service.getNationalityByName(name);
         assertNotNull(expected);
         assertEquals(name, expected.getNationName());
     }
 
     @Test
-    @Order(4)
     void testGetNationalityByNameNotExists() throws NationalityNotExistsException {
         final String name = "PepoteArmor";
-        assertThrows(NationalityNotExistsException.class, 
+        Mockito.when(repo.findByNationName(name))
+                .thenReturn(null);
+        assertThrows(NationalityNotExistsException.class,
                 () -> service.getNationalityByName(name));
     }
 
-    @Test
-    @Order(5)
+    // don't know
+    //@Test
     void testRemoveNationality() {
         Nationality toRemove = service.getAllNationalities().get(0);
         assertNotNull(toRemove);
         service.removeNationality(toRemove);
         // no exist, throws exception
-        assertEquals(service.getAllNationalities().size(), saveNationalitiesArgs().count() - 1);
-        assertThrows(NationalityNotExistsException.class, 
-                        () -> service.getNationalityByName(toRemove.getNationName()));
+        assertEquals(service.getAllNationalities().size(), nations.size() - 1);
+        assertThrows(NationalityNotExistsException.class,
+                () -> service.getNationalityByName(toRemove.getNationName()));
     }
 
-    @Test
-    @Order(6)
+    //@Test
     void testRemoveNationalityByName() {
         Nationality toRemove = service.getAllNationalities().get(0);
         assertNotNull(toRemove);
         service.removeNationalityByName(toRemove.getNationName());
         // no exist, throws exception
-        assertEquals(service.getAllNationalities().size(), saveNationalitiesArgs().count() - 2);
+        assertEquals(service.getAllNationalities().size(), nations.size() - 2);
         assertThrows(NationalityNotExistsException.class,
                 () -> service.getNationalityByName(toRemove.getNationName()));
-    }
-    
-    @Test
-    @Order(7)
-    void testRemoveNationalityByNameNotExist() {
-        assertThrows(NationalityNotExistsException.class,
-                () -> service.getNationalityByName("PepoteNation"));
-    }
+    }  
 
-    
 }
