@@ -3,6 +3,8 @@ package cbs.cine_foro.entity;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,10 +16,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Embeddable
+//@Entity
 public class VeredictUser {
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="user_id")
     private User userId;
     private Float score;
