@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
+import cbs.cine_foro.error.VeredictNotExistsException;
 import cbs.cine_foro.repository.VeredictRepo;
 
 @Service
@@ -29,33 +30,64 @@ public class VeredictServiceImpl implements IVeredictService {
     }
 
     @Override
-    public Veredict getVeredictById(Long id) {
-        return repo.findById(id).orElse(null); // TODO: exception
+    public Veredict getVeredictById(Long id) throws VeredictNotExistsException {
+        return repo.findById(id).orElseThrow(
+            () -> new VeredictNotExistsException()
+        );
     }
 
     @Override
-    public List<Veredict> getVeredictsByUser(User user) {
-        return repo.findAllByUser(user); // TODO: exception?
+    public List<Veredict> getVeredictsByUser(User user) throws VeredictNotExistsException {
+        List<Veredict> vers = repo.findAllByUser(user);
+        if (vers == null || vers.size() == 0) {
+            throw new VeredictNotExistsException();
+        }
+
+        return vers;
     }
 
     @Override
-    public List<Veredict> getVeredictsByUserName(String name) {
-        return repo.findAllByUserName(name); // TODO: exception
+    public List<Veredict> getVeredictsByUserName(String name) throws VeredictNotExistsException {
+        List<Veredict> vers = repo.findAllByUserName(name);
+
+        if (vers == null || vers.size() == 0) {
+            throw new VeredictNotExistsException();
+        }
+
+        return vers;
     }
 
     @Override
-    public List<Veredict> getVeredictsByUserId(Long id) {
-        return repo.findAllByUserId(id); // TODO: exception -> user has no veredicts
+    public List<Veredict> getVeredictsByUserId(Long id) throws VeredictNotExistsException {
+        List<Veredict> vers = repo.findAllByUserId(id);
+
+        if (vers == null || vers.size() == 0) {
+            throw new VeredictNotExistsException();
+        }
+
+        return vers;
     }
 
     @Override
-    public List<Veredict> getVeredictsByMovie(Movie movie) {
-        return repo.findAllByMovie(movie); // TODO: exception -> movie has no veredicts
+    public List<Veredict> getVeredictsByMovie(Movie movie) throws VeredictNotExistsException {
+        List<Veredict> vers = repo.findAllByMovie(movie);
+
+        if (vers == null || vers.size() == 0) {
+            throw new VeredictNotExistsException();
+        }
+
+        return vers;
     }
 
     @Override
-    public List<Veredict> getVeredictsByMovieId(Long id) {
-        return repo.findAllByMovieId(id); // TODO: exception
+    public List<Veredict> getVeredictsByMovieId(Long id) throws VeredictNotExistsException {
+        List<Veredict> vers = repo.findAllByMovieId(id);
+
+        if (vers == null || vers.size() == 0) {
+            throw new VeredictNotExistsException();
+        }
+
+        return vers;
     }
 
 }

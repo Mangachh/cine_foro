@@ -35,7 +35,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(NationalityNotExistsException.class)
     public ResponseEntity<ErrorMessage> nationalityNotExistsException(NationalityNotExistsException exception,
             WebRequest request) {
-        
+
+        ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
+        return ResponseEntity.status(message.getStatus()).body(message);
+    }
+
+    @ExceptionHandler(VeredictNotExistsException.class)
+    public ResponseEntity<ErrorMessage> veredictNotExistsException(VeredictNotExistsException exception,
+            WebRequest request) {
+                
         ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
         return ResponseEntity.status(message.getStatus()).body(message);
     }
