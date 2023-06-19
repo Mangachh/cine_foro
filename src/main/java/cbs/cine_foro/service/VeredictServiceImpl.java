@@ -32,7 +32,7 @@ public class VeredictServiceImpl implements IVeredictService {
 
     @Override
     public List<Veredict> getVeredictsByUser(User user) throws VeredictNotExistsException {
-        List<Veredict> vers = repo.findAllByUser(user);
+        List<Veredict> vers = repo.findAllByUserVeredictUser(user);
         if (vers == null || vers.size() == 0) {
             throw new VeredictNotExistsException();
         }

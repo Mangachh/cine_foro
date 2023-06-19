@@ -54,21 +54,21 @@ public class VeredictServiceImplTest {
 
         veredicts = List.of(
             Veredict.builder()
-                .movieId(movie)
+                .movie(movie)
                 .veredictId(1L)
-                .veredicts(
+                .userVeredict(
                     new VeredictUser(users.get(0), 7.0f, "Mejor_A", "Peor_A", "Viuda_A")
                 ).build(),
             Veredict.builder()
-                .movieId(movie)
+                .movie(movie)
                 .veredictId(1L)
-                .veredicts(
+                .userVeredict(
                     new VeredictUser(users.get(1), 2.0f, "Mejor_B", "Peor_b", "Viuda_b")
                 ).build(),
             Veredict.builder()
-                .movieId(movie)
+                .movie(movie)
                 .veredictId(1L)
-                .veredicts(
+                .userVeredict(
                     new VeredictUser(users.get(2), 5.2f, "Mejor_C", "Peor_C", "Viuda_C")
                 ).build()            
         );
@@ -143,9 +143,9 @@ public class VeredictServiceImplTest {
     void testGetVeredictsByUser() throws VeredictNotExistsException {
         final User user = users.get(1);
         List<Veredict> vers = this.veredicts.stream()
-                .filter(p -> p.getVeredicts().getUserId().getUserId() == user.getUserId()).toList();
+                .filter(p -> p.getUserVeredict().getUser().getUserId() == user.getUserId()).toList();
 
-        Mockito.when(repo.findAllByUser(user))
+        Mockito.when(repo.findAllByUserVeredictUser(user))
                 .thenReturn(vers);
 
         assertEquals(vers, this.service.getVeredictsByUser(user));
@@ -154,7 +154,7 @@ public class VeredictServiceImplTest {
     @Test
     void testGetVeredictsByUserNotExist() {
         User u = new User();
-        Mockito.when(repo.findAllByUser(u))
+        Mockito.when(repo.findAllByUserVeredictUser(u))
                 .thenReturn(List.of());
 
         assertThrows(VeredictNotExistsException.class, () -> service.getVeredictsByUser(u));
@@ -163,7 +163,7 @@ public class VeredictServiceImplTest {
     @Test
     void testGetVeredictsByUserId() throws VeredictNotExistsException {
         final Long id = 2L;
-        List<Veredict> vers = this.veredicts.stream().filter(p -> p.getVeredicts().getUserId().getUserId() == id)
+        List<Veredict> vers = this.veredicts.stream().filter(p -> p.getUserVeredict().getUser().getUserId() == id)
                 .toList();
 
         Mockito.when(repo.findAllByUserId(id))
@@ -187,7 +187,7 @@ public class VeredictServiceImplTest {
         final String userName = "Pepote";
 
         List<Veredict> vers = this.veredicts.stream()
-                .filter(p -> p.getVeredicts().getUserId().getName().equals(userName)).toList();
+                .filter(p -> p.getUserVeredict().getUser().getName().equals(userName)).toList();
 
         Mockito.when(this.repo.findAllByUserName(userName))
                 .thenReturn(vers);

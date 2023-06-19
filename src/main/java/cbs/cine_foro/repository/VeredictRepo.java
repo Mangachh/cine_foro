@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
 
+@Repository
 public interface VeredictRepo extends JpaRepository<Veredict, Long> {
     
     @Query(
@@ -31,7 +33,8 @@ public interface VeredictRepo extends JpaRepository<Veredict, Long> {
     // TODO: Tests!!!
     List<Veredict> findAllByMovie(final Movie movie);
 
-    List<Veredict> findAllByUser(final User user);
+    // ?
+    List<Veredict> findAllByUserVeredictUser(final User user);
     
     
 

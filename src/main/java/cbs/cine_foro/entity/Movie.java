@@ -75,7 +75,7 @@ public class Movie {
     private List<Nationality> nationalities;
     
     @OneToMany(
-            mappedBy = "movieId", 
+            mappedBy = "movie", 
             cascade = { CascadeType.REFRESH,
                         CascadeType.REMOVE },
             fetch = FetchType.EAGER,
@@ -86,7 +86,7 @@ public class Movie {
         if(nationalities == null || nationalities.size() == 0)
             return -1f;
 
-        return (float)veredicts.stream().mapToDouble(v -> v.getVeredicts().getScore()).sum() / veredicts.size();        
+        return (float)veredicts.stream().mapToDouble(v -> v.getUserVeredict().getScore()).sum() / veredicts.size();        
     }
 
 

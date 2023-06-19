@@ -28,7 +28,7 @@ public class VeredictUser {
     @JoinColumn(name="user_id", 
                 foreignKey = @ForeignKey(name = "fk_veredict_user_id"),
                             referencedColumnName = "user_id")
-    private User userId;
+    private User user;
     private Float score;
     private String bestMoment;
     private String worstMoment;

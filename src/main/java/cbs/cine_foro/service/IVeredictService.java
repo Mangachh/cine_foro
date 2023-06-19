@@ -1,9 +1,6 @@
 package cbs.cine_foro.service;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;

@@ -42,19 +42,18 @@ public class Veredict {
         strategy = GenerationType.SEQUENCE,
         generator = "veredict_sequence"
     )
-    // TODO: Change names on movieId and userId and so...
     private Long veredictId;
+
     @ManyToOne(cascade = {
                        CascadeType.REFRESH})
     @JoinColumn(name="movie_id", 
             foreignKey = @ForeignKey(name = "fk_veredict_movie_id"),
                          referencedColumnName = "MOVIE_ID")
-    private Movie movieId;
+    private Movie movie;
 
-    // esto puede ir a otra clase y hacer un embded? sip
-    // ahora necesitamos otra tabla para esto, no?
+    // Ideally this would be an array 
     @Embedded
-    private VeredictUser veredicts; 
+    private VeredictUser userVeredict; 
 
     
     

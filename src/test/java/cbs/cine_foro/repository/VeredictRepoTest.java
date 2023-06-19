@@ -94,7 +94,7 @@ public class VeredictRepoTest {
                 .worstMoment("El final es horrible")
                 .widow("La sombra detrás a puerta")
                 .build();
-            userOne.setUserId(users.get(0));
+            userOne.setUser(users.get(0));
 
         VeredictUser userTwo = VeredictUser.builder()
                 //.userId(users.get(1))
@@ -103,17 +103,17 @@ public class VeredictRepoTest {
                 .worstMoment("La música")
                 .widow("Comer burritos durante el tiroteo")
                 .build();
-            userTwo.setUserId(users.get(1));
+            userTwo.setUser(users.get(1));
         Veredict veredict = Veredict.builder()
-                .movieId(movie)
-                .veredicts(userTwo)
+                .movie(movie)
+                .userVeredict(userTwo)
                 .build();
 
         veredicts.add(veredict);
 
         veredict = Veredict.builder()
-                .movieId(movie)
-                .veredicts(userOne)
+                .movie(movie)
+                .userVeredict(userOne)
                 .build();
 
         veredicts.add(veredict);
@@ -134,7 +134,7 @@ public class VeredictRepoTest {
     @Order(2)
     void saveVeredictWithVeredictUserIdWrong() {
         VeredictUser userOne = VeredictUser.builder()
-                .userId(User.builder().userId(69L).build())
+                .user(User.builder().userId(69L).build())
                 .score(7f)
                 .bestMoment("Cuando se caen")
                 .worstMoment("El final es horrible")
@@ -142,8 +142,8 @@ public class VeredictRepoTest {
                 .build();
 
         Veredict veredict = Veredict.builder()
-                .movieId(Movie.builder().movieId(1L).build())
-                .veredicts(userOne)
+                .movie(Movie.builder().movieId(1L).build())
+                .userVeredict(userOne)
                 .build();
 
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(veredict));
@@ -160,11 +160,11 @@ public class VeredictRepoTest {
                 .worstMoment("El final es horrible")
                 .widow("La sombra detrás a puerta")
                 .build();
-        userOne.setUserId(users.get(0));
+        userOne.setUser(users.get(0));
 
         Veredict veredict = Veredict.builder()
-                .movieId(movie)
-                .veredicts(userOne)
+                .movie(movie)
+                .userVeredict(userOne)
                 .build();
         List<Movie> movies = movieRepo.findAll();
 
