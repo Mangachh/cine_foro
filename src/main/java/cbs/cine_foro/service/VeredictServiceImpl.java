@@ -10,11 +10,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+import org.springframework.stereotype.Service;
 
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
 import cbs.cine_foro.repository.VeredictRepo;
 
+@Service
 public class VeredictServiceImpl implements IVeredictService {
 
     @Autowired
@@ -32,19 +34,17 @@ public class VeredictServiceImpl implements IVeredictService {
 
     @Override
     public List<Veredict> getVeredictsByUser(User user) {
-        return null;
+        return repo.findAllByUserId(user.getUserId()); // TODO: exception?
     }
 
     @Override
     public List<Veredict> getVeredictsByUserName(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getVeredictsByUserName'");
+        return repo.findAllByUserName(name); // TODO: exception
     }
 
     @Override
     public List<Veredict> getVeredictsByUserId(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getVeredictsByUserId'");
+        return repo.findAllByUserId(id); // TODO: exception
     }
 
 }
