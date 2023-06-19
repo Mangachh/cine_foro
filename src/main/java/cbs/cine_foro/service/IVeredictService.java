@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
 
@@ -20,6 +21,10 @@ public interface IVeredictService{
     List<Veredict> getVeredictsByUserId(final Long id);
 
     List<Veredict> getVeredictsByUserName(final String name);
+
+    List<Veredict> getVeredictsByMovie(final Movie movie);
+
+    List<Veredict> getVeredictsByMovieId(final Long id);
 
 
 }

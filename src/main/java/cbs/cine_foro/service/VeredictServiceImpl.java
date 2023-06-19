@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.stereotype.Service;
 
+import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
 import cbs.cine_foro.repository.VeredictRepo;
@@ -34,7 +35,7 @@ public class VeredictServiceImpl implements IVeredictService {
 
     @Override
     public List<Veredict> getVeredictsByUser(User user) {
-        return repo.findAllByUserId(user.getUserId()); // TODO: exception?
+        return repo.findAllByUser(user); // TODO: exception?
     }
 
     @Override
@@ -44,7 +45,17 @@ public class VeredictServiceImpl implements IVeredictService {
 
     @Override
     public List<Veredict> getVeredictsByUserId(Long id) {
-        return repo.findAllByUserId(id); // TODO: exception
+        return repo.findAllByUserId(id); // TODO: exception -> user has no veredicts
+    }
+
+    @Override
+    public List<Veredict> getVeredictsByMovie(Movie movie) {
+        return repo.findAllByMovie(movie); // TODO: exception -> movie has no veredicts
+    }
+
+    @Override
+    public List<Veredict> getVeredictsByMovieId(Long id) {
+        return repo.findAllByMovieId(id); // TODO: exception
     }
 
 }
