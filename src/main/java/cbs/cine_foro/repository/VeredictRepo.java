@@ -15,6 +15,13 @@ public interface VeredictRepo extends JpaRepository<Veredict, Long> {
     List<Veredict> findAllByUserId(Long userId);
 
     @Query(
+        value = "SELECT * FROM veredicts vs " +
+                "LEFT JOIN users us USING(user_id) WHERE us.name = ?1",
+        nativeQuery = true
+    )
+    List<Veredict> findAllByUserName(final String name);
+
+    @Query(
         value = "SELECT * FROM veredicts vs WHERE vs.movie_id = ?1",
         nativeQuery = true)
     List<Veredict> findAllByMovieId(Long movieId);

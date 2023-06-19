@@ -195,6 +195,16 @@ public class VeredictRepoTest {
         assertEquals(2, veredicts.size());
     }
 
+    @Test
+    @Order(7)
+    void findAllByUserName() {
+        List<Veredict> vers = repo.findAllByUserName("Pepote");
+        System.out.println("**********************");
+        System.out.println(vers);
+        System.out.println("**********************");
+        assertEquals(1, vers.size());
+    }
+
     // delete veredict
     
 
