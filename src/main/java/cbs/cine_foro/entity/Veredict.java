@@ -42,7 +42,7 @@ public class Veredict {
         strategy = GenerationType.SEQUENCE,
         generator = "veredict_sequence"
     )
-
+    // TODO: Change names on movieId and userId and so...
     private Long veredictId;
     @ManyToOne(cascade = {
                        CascadeType.REFRESH})

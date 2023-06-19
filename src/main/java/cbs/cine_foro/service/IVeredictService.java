@@ -8,23 +8,24 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
+import cbs.cine_foro.error.VeredictNotExistsException;
 
 
 public interface IVeredictService{
     
     Veredict saveVeredict(final Veredict veredict);
 
-    Veredict getVeredictById(Long id);
+    Veredict getVeredictById(Long id) throws VeredictNotExistsException;
 
-    List<Veredict> getVeredictsByUser(final User user);
+    List<Veredict> getVeredictsByUser(final User user) throws VeredictNotExistsException;
 
-    List<Veredict> getVeredictsByUserId(final Long id);
+    List<Veredict> getVeredictsByUserId(final Long id) throws VeredictNotExistsException;
 
-    List<Veredict> getVeredictsByUserName(final String name);
+    List<Veredict> getVeredictsByUserName(final String name) throws VeredictNotExistsException;
 
-    List<Veredict> getVeredictsByMovie(final Movie movie);
+    List<Veredict> getVeredictsByMovie(final Movie movie) throws VeredictNotExistsException;
 
-    List<Veredict> getVeredictsByMovieId(final Long id);
+    List<Veredict> getVeredictsByMovieId(final Long id) throws VeredictNotExistsException;
 
 
 }
