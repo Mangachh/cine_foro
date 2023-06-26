@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import cbs.cine_foro.entity.Movie;
@@ -20,6 +22,7 @@ import cbs.cine_foro.entity.VeredictUser;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootTest
+//@DataJpaTest
 @TestMethodOrder(OrderAnnotation.class)
 public class VeredictRepoTest {
 
@@ -43,8 +46,9 @@ public class VeredictRepoTest {
         this.initUsers();
         this.initMovie();
         this.initVeredicts();
-
     }
+
+     
 
     void initUsers() {
         users = List.of(
@@ -203,6 +207,15 @@ public class VeredictRepoTest {
         System.out.println(vers);
         System.out.println("**********************");
         assertEquals(1, vers.size());
+    }
+
+    @Test
+    @Order(8)
+    // used at the end
+    void deleteAll(){
+        repo.deleteAll();
+        movieRepo.deleteAll();
+        userRepo.deleteAll();
     }
 
     // delete veredict

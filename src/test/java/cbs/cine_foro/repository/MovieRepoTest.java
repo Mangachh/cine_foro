@@ -6,14 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.h2.result.ResultTarget;
-import org.hibernate.TransientPropertyValueException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -22,12 +17,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.event.annotation.AfterTestClass;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 
 @TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)
 @SpringBootTest
@@ -48,8 +43,10 @@ public class MovieRepoTest {
     private List<String> nationNames = List.of("Japanese", "USA", "Korean", "Spanish");
     private List<Nationality> nationalities;
 
+    
     @PostConstruct
     void setUp() {
+        //this.clearUp();
         user = new User("Test User");
         try {
             user = userRepo.save(user);
@@ -77,7 +74,7 @@ public class MovieRepoTest {
         return n;
     }
 
-    @AfterTestClass
+    @AfterTestClass    
     void clearUp() {
         repo.deleteAll(movies);
         userRepo.delete(user);
@@ -123,11 +120,13 @@ public class MovieRepoTest {
     @Order(2)
     void findMoviesByUser() {
         List<Movie> resultList = repo.findAllByUserProposed(user);
+        final int expectedSize = 2;
         System.out.println("----------------------------");
         System.out.println(movies);
         System.out.println(user);
         System.out.println(resultList);
-        assertTrue(resultList.size() == 2);
+        //assertTrue(resultList.size() == 2);
+        assertEquals(expectedSize, resultList.size());
     }
 
     @Test
