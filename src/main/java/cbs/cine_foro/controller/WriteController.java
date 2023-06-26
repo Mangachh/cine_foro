@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
+import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.IUserService;
 
 /**
@@ -22,6 +24,9 @@ public class WriteController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IMovieService movieService;
     
     // create/delete user
     @PostMapping("/user")
@@ -54,6 +59,11 @@ public class WriteController {
     // create nationality
 
     // create movie
+    @PostMapping("movie")
+    public Movie createMovie(@RequestBody final Movie movie) {
+        System.out.println(movie.getOriginalTitle());
+        return movieService.saveMovie(movie);
+    }
 
     // create valid whatever
 }
