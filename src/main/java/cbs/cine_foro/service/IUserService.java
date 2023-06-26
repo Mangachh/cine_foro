@@ -24,7 +24,9 @@ public interface IUserService {
 
     public User getUserByName(final String name) throws UserNotExistsException;
 
-    public User updateUserName(final String originalName, final String newName) throws UserNotExistsException;
+    public User updateUserNameById(final Long id, final String newName) throws UserNotExistsException;
+
+    public User updateUserNameByName(final String originalName, final String newName) throws UserNotExistsException;
 
 
     

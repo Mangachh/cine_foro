@@ -211,7 +211,7 @@ public class VeredictRepoTest {
 
     @Test
     @Order(8)
-    // used at the end
+    // used at the end, easy to clean up
     void deleteAll(){
         repo.deleteAll();
         movieRepo.deleteAll();

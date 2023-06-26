@@ -128,7 +128,7 @@ public class UserServiceImplTest {
         Mockito.when(repo.save(testUsers.get(0)))
                 .thenReturn(testUsers.get(0));
 
-        User result = service.updateUserName(testUsers.get(0).getName(), newName);
+        User result = service.updateUserNameByName(testUsers.get(0).getName(), newName);
         //User expected = service.getUserById(result.getUserId());
         assertEquals(result.getName(), newName);
     }
@@ -141,6 +141,6 @@ public class UserServiceImplTest {
             .thenReturn(Optional.empty());
             
         assertThrows(UserNotExistsException.class,
-                () -> service.updateUserName(name, newName));
+                () -> service.updateUserNameByName(name, newName));
     }
 }

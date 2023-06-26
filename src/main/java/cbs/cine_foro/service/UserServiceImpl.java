@@ -44,10 +44,19 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User updateUserName(String originalName, String newName) throws UserNotExistsException {
+    public User updateUserNameByName(String originalName, String newName) throws UserNotExistsException {
         User user = repo.findByName(originalName).orElseThrow(() ->
                                     new UserNotExistsException());
                 
+        user.setName(newName);
+        return repo.save(user);
+    }
+
+    @Override
+    public User updateUserNameById(Long id, String newName) throws UserNotExistsException {
+        User user = repo.findById(id).orElseThrow(() ->
+                                        new UserNotExistsException());
+                                    
         user.setName(newName);
         return repo.save(user);
     }
