@@ -61,4 +61,14 @@ public class UserServiceImpl implements IUserService {
         return repo.save(user);
     }
 
+    @Override
+    public void deleteUserById(Long id) {
+        repo.deleteById(id);
+    }
+
+    @Override
+    public void deleteUserByName(String name) {
+        repo.deleteByName(name);
+    }
+
 }

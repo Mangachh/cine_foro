@@ -29,31 +29,32 @@ public class WriteController {
     // create user
     @PostMapping("/user")
     public User createUser(@RequestBody User user) throws UserAlreadyExistsException {
-        return userService.saveUser(user);
+        return this.userService.saveUser(user);
     }
 
 
     @PutMapping("/user/{id}")
     public User updateUserById(@PathVariable(name = "id") final Long id,
             @RequestParam(name = "newName") final String newName) throws UserNotExistsException {
-        return userService.updateUserNameById(id, newName);
+        return this.userService.updateUserNameById(id, newName);
     }
     
     @PutMapping("/user/")
     public User updateUserById(@RequestParam(name = "userName") final String name,
             @RequestParam(name = "newName") final String newName) throws UserNotExistsException {
-        return userService.updateUserNameByName(name, newName);
+        return this.userService.updateUserNameByName(name, newName);
     }
     
     
 
     @DeleteMapping("user/{id}")
-    public void deleteUserById() {
+    public void deleteUserById(@PathVariable(name = "id") final Long id) {
+        this.userService.deleteUserById(id);
     }
 
     @DeleteMapping("/user/")
-    public void deleteUserByName() {
-        
+    public void deleteUserByName(@RequestParam(name = "name") final String name) {
+        this.userService.deleteUserByName(name);
     }
 
     // create nationality

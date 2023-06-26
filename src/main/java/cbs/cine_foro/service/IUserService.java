@@ -28,7 +28,9 @@ public interface IUserService {
 
     public User updateUserNameByName(final String originalName, final String newName) throws UserNotExistsException;
 
+    public void deleteUserById(final Long id);
 
+    public void deleteUserByName(final String name);
     
 
 
