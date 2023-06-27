@@ -1,7 +1,9 @@
 package cbs.cine_foro.entity;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -80,13 +82,17 @@ public class Movie {
                         CascadeType.REMOVE },
             fetch = FetchType.EAGER,
         orphanRemoval = true)
-    private List<Veredict> veredicts;
+    private Set<Veredict> veredicts = new HashSet<Veredict>();
     
-    public float getAverage(){
-        if(nationalities == null || nationalities.size() == 0)
+    public float getAverage() {
+        if (nationalities == null || nationalities.size() == 0)
             return -1f;
 
-        return (float)veredicts.stream().mapToDouble(v -> v.getUserVeredict().getScore()).sum() / veredicts.size();        
+        return (float) veredicts.stream().mapToDouble(v -> v.getUserVeredict().getScore()).sum() / veredicts.size();
+    }
+    
+    public void setVeredicts(final Set<Veredict> veredicts) {
+        this.veredicts.addAll(veredicts);
     }
 
 
