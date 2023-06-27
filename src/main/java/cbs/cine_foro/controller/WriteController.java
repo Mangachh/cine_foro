@@ -47,7 +47,7 @@ public class WriteController {
     @PutMapping("/user/{id}")
     public User updateUserById(@PathVariable(name = "id") final Long id,
             @RequestParam(name = "newName") final String newName) throws UserNotExistsException {
-        return this.userService.updateUserNameById(id, newName);
+        return this.userService.updateUserNameById(id, newName); 
     }
 
     @PutMapping("/user/")
