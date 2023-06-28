@@ -13,6 +13,10 @@ public interface INationService {
 
     Nationality getNationalityByName(final String name) throws NationalityNotExistsException;
 
+    boolean isNationalityExists(final String name);
+
+    Nationality geNationalityByNameNoException(final String name);
+
     void removeNationality(final Nationality nationality);
 
     void removeNationalityByName(final String name);

@@ -44,5 +44,15 @@ public class NationServiceImpl implements INationService {
     public void removeNationalityByName(String name) {
         repo.deleteByNationName(name); // exception?
     }
+
+    @Override
+    public boolean isNationalityExists(String name) {
+        return this.repo.findByNationName(name) != null;
+    }
+
+    @Override
+    public Nationality geNationalityByNameNoException(String name) {
+        return this.repo.findByNationName(name);
+    }
     
 }

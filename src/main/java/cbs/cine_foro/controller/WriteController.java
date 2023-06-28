@@ -1,5 +1,7 @@
 package cbs.cine_foro.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,14 @@ import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
+import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
 import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
+import cbs.cine_foro.service.IVeredictService;
 import jakarta.websocket.server.PathParam;
 
 /**
@@ -37,6 +41,9 @@ public class WriteController {
 
     @Autowired
     private INationService nationService;
+
+    @Autowired
+    private IVeredictService veredictService;
 
     // create/delete user
     @PostMapping("/user")
@@ -69,8 +76,26 @@ public class WriteController {
     // create movie
     @PostMapping("movie")
     public Movie createMovie(@RequestBody final Movie movie) {
-        System.out.println(movie.getOriginalTitle());
-        return this.movieService.saveMovie(movie);
+        System.out.println(movie);
+        // save nationalities first
+        List<Nationality> newNations = new ArrayList<>();
+        Nationality temp;
+
+        for (Nationality n : movie.getNationalities()) {
+            temp = this.nationService.geNationalityByNameNoException(n.getNationName());
+            if (temp == null) {
+                temp = this.nationService.saveNationality(n);
+            }
+
+            newNations.add(temp);            
+        }
+        
+        //List<Nationality> nList = movie.getNationalities();
+        movie.getNationalities().clear();
+        movie.setNationalities(newNations);
+        Movie m = this.movieService.saveMovie(movie);
+        
+        return m;
     }
 
     // update movie
@@ -109,4 +134,21 @@ public class WriteController {
     }
 
     // create valid whatever
+    @PostMapping("veredict")
+    public Veredict createVeredict(@RequestBody final Veredict veredict) throws MovieNotExistsException {
+        Movie m = this.movieService.getMovieById(veredict.getMovie().getMovieId());
+        veredict.setMovie(m);
+        m.getVeredicts().add(veredict);
+        return this.veredictService.saveVeredict(veredict);
+    }
+
+    // TODO: create some model classes:
+    /*
+     * fe: veredictModel: userId, MovieId, bla-bla-bla (this way we don't need to put all the info)
+     * createVeredict(veredictModel):
+     *      Movie = movieService.getById(veredicModel.movieId)
+     *      the same for the user
+     *      create the object veredict and so on
+     *      yeah
+     */
 }

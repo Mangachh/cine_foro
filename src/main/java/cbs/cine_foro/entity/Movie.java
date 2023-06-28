@@ -1,6 +1,7 @@
 package cbs.cine_foro.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,8 +66,8 @@ public class Movie {
 
     @ManyToMany(
             cascade = {
-                       CascadeType.MERGE,
-                       CascadeType.REFRESH},
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST},
             fetch = FetchType.LAZY
     )
     @JoinColumn(
@@ -74,7 +75,7 @@ public class Movie {
         referencedColumnName = "natioality_id",
         foreignKey = @ForeignKey(name = "fk_nationality_id")
     )
-    private List<Nationality> nationalities;
+    private List<Nationality> nationalities = new ArrayList<>();
     
     @OneToMany(
             mappedBy = "movie", 
@@ -85,7 +86,7 @@ public class Movie {
     private Set<Veredict> veredicts = new HashSet<Veredict>();
     
     public float getAverage() {
-        if (nationalities == null || nationalities.size() == 0)
+        if (veredicts == null || veredicts.size() == 0)
             return -1f;
 
         return (float) veredicts.stream().mapToDouble(v -> v.getUserVeredict().getScore()).sum() / veredicts.size();
@@ -93,6 +94,10 @@ public class Movie {
     
     public void setVeredicts(final Set<Veredict> veredicts) {
         this.veredicts.addAll(veredicts);
+    }
+
+    public void setNationalities(final List<Nationality> nationalities){
+        this.nationalities.addAll(nationalities);
     }
 
 

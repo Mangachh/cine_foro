@@ -47,12 +47,13 @@ public class Veredict {
                        CascadeType.REFRESH})
     @JoinColumn(name="movie_id", 
             foreignKey = @ForeignKey(name = "fk_veredict_movie_id"),
-                         referencedColumnName = "MOVIE_ID")
+                         referencedColumnName = "movie_id")
     private Movie movie;
 
     // Ideally this would be an array 
     @Embedded
-    private VeredictUser userVeredict; 
+    private VeredictUser userVeredict;
+    
 
     
     

@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import cbs.cine_foro.entity.Movie;
+import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
 import cbs.cine_foro.service.IMovieService;
+import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
 import jakarta.websocket.server.PathParam;
 
@@ -26,6 +28,9 @@ public class ReadController {
 
     @Autowired
     private IMovieService movieService;
+
+    @Autowired
+    private INationService nationService;
 
     // read users
     @GetMapping("/user/{id}")
@@ -74,6 +79,10 @@ public class ReadController {
     // get between
 
     // get by nationality
+    @GetMapping("nations")
+    public List<Nationality> getAllNations() {
+        return this.nationService.getAllNationalities();
+    }
 
     // get by average
 }
