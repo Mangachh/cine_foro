@@ -17,11 +17,13 @@ import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
+import cbs.cine_foro.entity.VeredictUser;
 import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
 import cbs.cine_foro.model.MovieModel;
+import cbs.cine_foro.model.VeredictModel;
 import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
@@ -165,21 +167,41 @@ public class WriteController {
 
     // create valid whatever
     @PostMapping("veredict")
-    public Veredict createVeredict(@RequestBody final Veredict veredict) throws MovieNotExistsException {
-        Movie m = this.movieService.getMovieById(veredict.getMovie().getMovieId());
-        veredict.setMovie(m);
-        m.getVeredicts().add(veredict);
-        return this.veredictService.saveVeredict(veredict);
+    public Veredict createVeredict(@RequestBody final VeredictModel veredict)
+            throws MovieNotExistsException, UserNotExistsException {
+        Movie m = this.movieService.getMovieById(veredict.getMovieId());
+        User u = this.userService.getUserById(veredict.getUserId());
+        Veredict v = this.veredictModelToVeredict(veredict);
+        v.setMovie(m);
+        v.getUserVeredict().setUser(u);
+        return this.veredictService.saveVeredict(v);
     }
 
-    // TODO: create some model classes:
+    @DeleteMapping("veredict/{id}")
+    public void deleteVeredict(@PathVariable(name = "id") final Long id) {
+        this.veredictService.deleteVeredictById(id);
+    }
+    
+    
+
+    private Veredict veredictModelToVeredict(final VeredictModel veredict) {
+        VeredictUser verUser = VeredictUser.builder().score(veredict.getScore()).bestMoment(veredict.getBestMoment())
+                .worstMoment(veredict.getWorstMoment()).widow(veredict.getWidow()).build();
+
+        return Veredict.builder().userVeredict(verUser).build();
+
+    }   
+
+
+    // TODO: 
     /*
-     * fe: veredictModel: userId, MovieId, bla-bla-bla (this way we don't need to
-     * put all the info)
-     * createVeredict(veredictModel):
-     * Movie = movieService.getById(veredicModel.movieId)
-     * the same for the user
-     * create the object veredict and so on
-     * yeah
+     * create some model classes -> Works fine and it's easy to work with.
+     * Now: 
+     *  - add a list of veredicts
+     *  - add a list of movies?
+     *  - remove veredicts and so...
+     *  - create web page
+     *  - security with the insert
+     * 
      */
 }

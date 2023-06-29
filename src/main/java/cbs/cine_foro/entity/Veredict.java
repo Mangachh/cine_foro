@@ -1,8 +1,11 @@
 package cbs.cine_foro.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -44,13 +47,15 @@ public class Veredict {
     private Long veredictId;
 
     @ManyToOne(cascade = {
-                       CascadeType.REFRESH})
+                       CascadeType.REFRESH},
+                fetch = FetchType.LAZY)
     @JoinColumn(name="movie_id", 
             foreignKey = @ForeignKey(name = "fk_veredict_movie_id"),
-                         referencedColumnName = "movie_id")
+            referencedColumnName = "movie_id")
+    @JsonBackReference // this way we won't have infinite recursion
     private Movie movie;
 
-    // Ideally this would be an array 
+    // Ideally this should be an array 
     @Embedded
     private VeredictUser userVeredict;
     

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
+import cbs.cine_foro.entity.Veredict;
 import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
 import cbs.cine_foro.service.IMovieService;
@@ -76,13 +77,11 @@ public class ReadController {
         return this.movieService.getMoviesByUser(user);
     }
 
-    // get between
-
     // get by nationality
     @GetMapping("nations")
     public List<Nationality> getAllNations() {
         return this.nationService.getAllNationalities();
     }
 
-    // get by average
+    
 }

@@ -84,4 +84,9 @@ public class VeredictServiceImpl implements IVeredictService {
         return vers;
     }
 
+    @Override
+    public void deleteVeredictById(Long id) {
+        this.repo.deleteById(id);
+    }
+
 }

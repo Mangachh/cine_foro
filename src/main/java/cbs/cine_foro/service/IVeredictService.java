@@ -14,6 +14,8 @@ public interface IVeredictService{
 
     Veredict getVeredictById(Long id) throws VeredictNotExistsException;
 
+    void deleteVeredictById(final Long id);
+
     List<Veredict> getVeredictsByUser(final User user) throws VeredictNotExistsException;
 
     List<Veredict> getVeredictsByUserId(final Long id) throws VeredictNotExistsException;
