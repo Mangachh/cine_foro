@@ -96,7 +96,11 @@ public class Movie {
         this.veredicts.addAll(veredicts);
     }
 
-    public void setNationalities(final List<Nationality> nationalities){
+    public void setNationalities(final List<Nationality> nationalities) {
+        if(this.nationalities == null){
+            this.nationalities = new ArrayList<>();
+        }
+        
         this.nationalities.addAll(nationalities);
     }
 

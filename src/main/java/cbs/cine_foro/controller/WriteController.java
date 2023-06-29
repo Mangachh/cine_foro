@@ -21,6 +21,7 @@ import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
+import cbs.cine_foro.model.MovieModel;
 import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
@@ -54,7 +55,7 @@ public class WriteController {
     @PutMapping("/user/{id}")
     public User updateUserById(@PathVariable(name = "id") final Long id,
             @RequestParam(name = "newName") final String newName) throws UserNotExistsException {
-        return this.userService.updateUserNameById(id, newName); 
+        return this.userService.updateUserNameById(id, newName);
     }
 
     @PutMapping("/user/")
@@ -74,7 +75,7 @@ public class WriteController {
     }
 
     // create movie
-    @PostMapping("movie")
+    @PostMapping("movie/obsolete")
     public Movie createMovie(@RequestBody final Movie movie) {
         System.out.println(movie);
         // save nationalities first
@@ -87,22 +88,51 @@ public class WriteController {
                 temp = this.nationService.saveNationality(n);
             }
 
-            newNations.add(temp);            
+            newNations.add(temp);
         }
-        
-        //List<Nationality> nList = movie.getNationalities();
+
+        // List<Nationality> nList = movie.getNationalities();
         movie.getNationalities().clear();
         movie.setNationalities(newNations);
         Movie m = this.movieService.saveMovie(movie);
-        
+
         return m;
+    }
+
+    @PostMapping("movie")
+    public Movie createMovie(@RequestBody final MovieModel movie) throws UserNotExistsException {
+        // get the user
+        User u = this.userService.getUserById(movie.getUserProposedId());
+        Movie m = this.movieModelToMovie(movie);
+        m.setUserProposed(u);
+        Nationality tempNation;
+        List<Nationality> nationalities = new ArrayList<>();
+
+        for (String nation : movie.getNationalities()) {
+            tempNation = this.nationService.geNationalityByNameNoException(nation);
+
+            if (tempNation == null) {
+                tempNation = this.nationService.saveNationality(new Nationality(nation));
+            }
+
+            nationalities.add(tempNation);
+        }
+        
+        m.setNationalities(nationalities);
+        return this.movieService.saveMovie(m);
+    }
+
+    private Movie movieModelToMovie(final MovieModel model) {
+        return Movie.builder().originalTitle(model.getOriginalTitle()).spanishTitle(model.getSpanishTitle())
+                .releaseYear(model.getReleaseYear()).proposedDate(model.getProposedDate()).build();
+
     }
 
     // update movie
     @PutMapping("movie/{id}")
     public Movie updateMovie(@PathVariable(name = "id") final Long id,
             @RequestBody final Movie movie) {
-        
+
         // mmmm, don't know how to do it
         Set<Veredict> nn = movie.getVeredicts();
         movie.setMovieId(id);
@@ -144,11 +174,12 @@ public class WriteController {
 
     // TODO: create some model classes:
     /*
-     * fe: veredictModel: userId, MovieId, bla-bla-bla (this way we don't need to put all the info)
+     * fe: veredictModel: userId, MovieId, bla-bla-bla (this way we don't need to
+     * put all the info)
      * createVeredict(veredictModel):
-     *      Movie = movieService.getById(veredicModel.movieId)
-     *      the same for the user
-     *      create the object veredict and so on
-     *      yeah
+     * Movie = movieService.getById(veredicModel.movieId)
+     * the same for the user
+     * create the object veredict and so on
+     * yeah
      */
 }
