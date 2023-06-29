@@ -22,6 +22,7 @@ import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
+import cbs.cine_foro.error.VeredictMovieExistsException;
 import cbs.cine_foro.error.VeredictNotExistsException;
 import cbs.cine_foro.model.MovieModel;
 import cbs.cine_foro.model.VeredictModel;
@@ -169,7 +170,7 @@ public class WriteController {
     // create valid whatever
     @PostMapping("veredict")
     public Veredict createVeredict(@RequestBody final VeredictModel veredict)
-            throws MovieNotExistsException, UserNotExistsException {
+            throws MovieNotExistsException, UserNotExistsException, VeredictMovieExistsException {
         Movie m = this.movieService.getMovieById(veredict.getMovieId());
         User u = this.userService.getUserById(veredict.getUserId());
         Veredict v = this.veredictModelToVeredict(veredict);
@@ -185,7 +186,7 @@ public class WriteController {
 
     @PutMapping("veredict/{id}")
     public Veredict updateVeredict(@PathVariable(name = "id") final Long id,
-            @RequestBody final VeredictModel veredict) throws VeredictNotExistsException, MovieNotExistsException, UserNotExistsException {
+            @RequestBody final VeredictModel veredict) throws VeredictNotExistsException, MovieNotExistsException, UserNotExistsException, VeredictMovieExistsException {
         
         Veredict old = this.veredictService.getVeredictById(id);
 

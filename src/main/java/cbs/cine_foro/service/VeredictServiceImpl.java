@@ -3,11 +3,13 @@ package cbs.cine_foro.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
+import cbs.cine_foro.error.VeredictMovieExistsException;
 import cbs.cine_foro.error.VeredictNotExistsException;
 import cbs.cine_foro.repository.VeredictRepo;
 
@@ -18,9 +20,13 @@ public class VeredictServiceImpl implements IVeredictService {
     private VeredictRepo repo;
 
     @Override
-    public Veredict saveVeredict(Veredict veredict) {
-        // TODO: exception if exist??? 
-        return repo.save(veredict);
+    public Veredict saveVeredict(Veredict veredict) throws VeredictMovieExistsException {
+        try{
+            return repo.save(veredict);
+        } catch (DataIntegrityViolationException e) {
+            throw new VeredictMovieExistsException();
+        }
+        
     }
 
     @Override

@@ -16,40 +16,46 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ResponseEntity<ErrorMessage> userAlreadyExistsException(UserAlreadyExistsException exception,
             WebRequest request) {
 
-        ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
-        //ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST, "Pepote manda, joer");
-        return ResponseEntity.badRequest().body(message);
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(UserNotExistsException.class)
     public ResponseEntity<ErrorMessage> userNotExistsException(UserNotExistsException exception,
             WebRequest request) {
 
-        ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
-        return ResponseEntity.status(message.getStatus()).body(message);
+        return this.createResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(MovieNotExistsException.class)
     public ResponseEntity<ErrorMessage> moveNotExistsException(MovieNotExistsException exception,
             WebRequest request) {
 
-        ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
-        return ResponseEntity.status(message.getStatus()).body(message);
+        return this.createResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(NationalityNotExistsException.class)
     public ResponseEntity<ErrorMessage> nationalityNotExistsException(NationalityNotExistsException exception,
             WebRequest request) {
 
-        ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
-        return ResponseEntity.status(message.getStatus()).body(message);
+        return this.createResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(VeredictNotExistsException.class)
     public ResponseEntity<ErrorMessage> veredictNotExistsException(VeredictNotExistsException exception,
             WebRequest request) {
-                
-        ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
-        return ResponseEntity.status(message.getStatus()).body(message);
+
+        return this.createResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(VeredictMovieExistsException.class)
+    public ResponseEntity<ErrorMessage> veredictMovieExistsExeption(VeredictMovieExistsException exception,
+            WebRequest request) {
+
+        return this.createResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+    
+    private ResponseEntity<ErrorMessage> createResponseEntity(final HttpStatus status, final String message) {
+        ErrorMessage error = new ErrorMessage(status, message);
+        return ResponseEntity.status(error.getStatus()).body(error);
     }
 }

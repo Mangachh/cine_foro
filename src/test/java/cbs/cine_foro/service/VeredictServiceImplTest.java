@@ -16,6 +16,7 @@ import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
 import cbs.cine_foro.entity.VeredictUser;
+import cbs.cine_foro.error.VeredictMovieExistsException;
 import cbs.cine_foro.error.VeredictNotExistsException;
 import cbs.cine_foro.repository.VeredictRepo;
 import jakarta.annotation.PostConstruct;
@@ -203,7 +204,7 @@ public class VeredictServiceImplTest {
     }
 
     @Test
-    void testSaveVeredict() {
+    void testSaveVeredict() throws VeredictMovieExistsException {
         Veredict a = new Veredict(1L, new Movie(), new VeredictUser());
         Mockito.when(this.repo.save(a))
                 .thenReturn(a);
