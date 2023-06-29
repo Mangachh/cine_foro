@@ -27,5 +27,6 @@ public interface IVeredictService{
 
     List<Veredict> getVeredictsByMovieId(final Long id) throws VeredictNotExistsException;
 
+    List<Veredict> getAllVeredicts();
 
 }

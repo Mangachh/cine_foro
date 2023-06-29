@@ -95,4 +95,9 @@ public class VeredictServiceImpl implements IVeredictService {
         this.repo.deleteById(id);
     }
 
+    @Override
+    public List<Veredict> getAllVeredicts() {
+        return this.repo.findAll();
+    }
+
 }

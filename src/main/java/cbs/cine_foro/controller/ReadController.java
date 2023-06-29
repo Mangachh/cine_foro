@@ -14,9 +14,11 @@ import cbs.cine_foro.entity.User;
 import cbs.cine_foro.entity.Veredict;
 import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
+import cbs.cine_foro.error.VeredictNotExistsException;
 import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
+import cbs.cine_foro.service.IVeredictService;
 import jakarta.websocket.server.PathParam;
 
 /*
@@ -32,6 +34,9 @@ public class ReadController {
 
     @Autowired
     private INationService nationService;
+
+    @Autowired
+    private IVeredictService veredictService;
 
     // read users
     @GetMapping("/user/{id}")
@@ -83,5 +88,15 @@ public class ReadController {
         return this.nationService.getAllNationalities();
     }
 
+    @GetMapping("veredicts")
+    public List<Veredict> getAllVeredicts() {
+        return this.veredictService.getAllVeredicts();
+    }
     
+    @GetMapping("veredict/movie/{id}")
+    public List<Veredict> getAllVeredictsByMovieId(@PathVariable(name = "id") final Long id) throws VeredictNotExistsException{
+        return this.veredictService.getVeredictsByMovieId(id);
+    }
+
+
 }
