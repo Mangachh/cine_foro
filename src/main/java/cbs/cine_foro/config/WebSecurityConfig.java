@@ -10,12 +10,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity 
 public class WebSecurityConfig {
-    
+    private static final boolean IS_DEBUG = true;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // woooo it works
-        http.cors(cors -> cors.disable()).csrf(csrf -> csrf.disable())
+        if (! IS_DEBUG) {
+            http.cors(cors -> cors.disable()).csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(r -> r.requestMatchers(HttpMethod.GET).permitAll());
+        } else {
+            http.cors(cors -> cors.disable()).csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(r -> r.anyRequest().permitAll());
+        }
+        
         return http.build();
     }
 }
