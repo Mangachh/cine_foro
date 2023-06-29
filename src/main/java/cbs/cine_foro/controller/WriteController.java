@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +37,7 @@ import jakarta.websocket.server.PathParam;
  * All the writings in the database are here
  */
 @RestController
+@RequestMapping("write/")
 public class WriteController {
 
     @Autowired
@@ -221,8 +223,6 @@ public class WriteController {
      * create some model classes -> Works fine and it's easy to work with.
      * Now:
      * - add a list of veredicts
-     * - add a list of movies?
-     * - remove veredicts and so...
      * - create web page
      * - security with the insert
      * 
