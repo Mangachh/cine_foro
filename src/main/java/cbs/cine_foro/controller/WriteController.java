@@ -22,6 +22,7 @@ import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
+import cbs.cine_foro.error.VeredictNotExistsException;
 import cbs.cine_foro.model.MovieModel;
 import cbs.cine_foro.model.VeredictModel;
 import cbs.cine_foro.service.IMovieService;
@@ -119,7 +120,7 @@ public class WriteController {
 
             nationalities.add(tempNation);
         }
-        
+
         m.setNationalities(nationalities);
         return this.movieService.saveMovie(m);
     }
@@ -181,8 +182,30 @@ public class WriteController {
     public void deleteVeredict(@PathVariable(name = "id") final Long id) {
         this.veredictService.deleteVeredictById(id);
     }
-    
-    
+
+    @PutMapping("veredict/{id}")
+    public Veredict updateVeredict(@PathVariable(name = "id") final Long id,
+            @RequestBody final VeredictModel veredict) throws VeredictNotExistsException, MovieNotExistsException, UserNotExistsException {
+        
+        Veredict old = this.veredictService.getVeredictById(id);
+
+        // do the checks 'cause it's fastest
+        if (old.getMovie().getMovieId() != veredict.getMovieId()) {
+            old.setMovie(this.movieService.getMovieById(veredict.getMovieId()));
+        }
+
+        if (old.getUserVeredict().getUser().getUserId() != veredict.getUserId()) {
+            old.getUserVeredict().setUser(this.userService.getUserById(veredict.getUserId()));
+        }
+
+        // TODO: optimize?
+        old.getUserVeredict().setBestMoment(veredict.getBestMoment());
+        old.getUserVeredict().setWorstMoment(veredict.getWorstMoment());
+        old.getUserVeredict().setWidow(veredict.getWidow());
+        old.getUserVeredict().setScore(veredict.getScore());
+        
+        return this.veredictService.saveVeredict(old);        
+    }
 
     private Veredict veredictModelToVeredict(final VeredictModel veredict) {
         VeredictUser verUser = VeredictUser.builder().score(veredict.getScore()).bestMoment(veredict.getBestMoment())
@@ -190,18 +213,17 @@ public class WriteController {
 
         return Veredict.builder().userVeredict(verUser).build();
 
-    }   
+    }
 
-
-    // TODO: 
+    // TODO:
     /*
      * create some model classes -> Works fine and it's easy to work with.
-     * Now: 
-     *  - add a list of veredicts
-     *  - add a list of movies?
-     *  - remove veredicts and so...
-     *  - create web page
-     *  - security with the insert
+     * Now:
+     * - add a list of veredicts
+     * - add a list of movies?
+     * - remove veredicts and so...
+     * - create web page
+     * - security with the insert
      * 
      */
 }
