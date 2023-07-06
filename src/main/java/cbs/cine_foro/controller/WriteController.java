@@ -1,5 +1,6 @@
 package cbs.cine_foro.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
 import cbs.cine_foro.service.IVeredictService;
+import jakarta.annotation.PostConstruct;
 import jakarta.websocket.server.PathParam;
 
 /**
@@ -52,6 +54,57 @@ public class WriteController {
     @Autowired
     private IVeredictService veredictService;
 
+    //dummy data
+    @PostConstruct
+    public void dummyData() throws UserAlreadyExistsException, VeredictMovieExistsException {
+        // create users
+        User a = new User("Pepote");
+        User b = new User("Mariela");
+        User c = new User("Pichan");
+        this.userService.saveUser(a);
+        this.userService.saveUser(b);
+        this.userService.saveUser(c);
+
+        // movies
+        Movie mA = Movie.builder()
+                .originalTitle("仕事に行きたくない")
+                .spanishTitle("Las palabrotas de pepote")
+                .proposedDate(LocalDate.of(2021, 01, 07))
+                .userProposed(a)
+                .releaseYear("2015")
+                .nationalities(List.of(
+                        new Nationality("Japan")))
+                .build();
+        Movie mB = Movie.builder()
+                .originalTitle("Party Party's")
+                .spanishTitle("Fiesta sin fiesta")
+                .proposedDate(LocalDate.of(1985, 12, 15))
+                .userProposed(b)
+                .releaseYear("1958")
+                .nationalities(List.of(
+                        new Nationality("USA"),
+                        new Nationality("Canada")))
+                .build();
+
+        this.movieService.saveMovie(mA);
+        this.movieService.saveMovie(mB);
+
+        Veredict vA = Veredict.builder()
+                .movie(mA)
+                .userVeredict(
+                        new VeredictUser(c, 8.5f, "Cuando pepote se cae", "La música", "LA escena final"))
+                .build();
+
+        Veredict vb = Veredict.builder()
+                .movie(mA)
+                .userVeredict(
+                        new VeredictUser(b, 2.3f, "Las cortinas de zanahoria", "Eso de allí.", "Mascotas turbias"))
+                .build();
+
+        this.veredictService.saveVeredict(vb);
+        this.veredictService.saveVeredict(vA);
+    }
+    
     // create/delete user
     @PostMapping("/user")
     public User createUser(@RequestBody User user) throws UserAlreadyExistsException {

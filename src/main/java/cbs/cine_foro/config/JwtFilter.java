@@ -26,18 +26,25 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final String STARTS_WITH = "Bearer ";
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    
+
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-       
+
         final String authHeader = request.getHeader(AUTHORIZATION_HEADER);
         final String jwt;
         final String userName;
-        
+
+        // Allow the cors (don't know what is it, but well)
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
+
         if (authHeader == null || authHeader.startsWith(STARTS_WITH) == false) {
             filterChain.doFilter(request, response);
             return;
@@ -45,7 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         jwt = authHeader.substring(STARTS_WITH.length());
         userName = jwtService.extractUserName(jwt);
-        
+
         // if getAut... is null, the user is not authenticated
         if (userName != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -63,8 +70,8 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
         }
-        
+
         filterChain.doFilter(request, response);
     }
-    
+
 }
