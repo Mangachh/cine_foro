@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -37,12 +39,12 @@ public class ReviewRepoTest {
     private List<User> users;
 
     private Movie movie;
-
+    
     @PostConstruct
-    void init() {
+    void init() {        
         this.initUsers();
         this.initMovie();
-        this.initVeredicts();
+        this.initReviews();
     }
 
      
@@ -81,7 +83,7 @@ public class ReviewRepoTest {
         }
     }
 
-    void initVeredicts() {
+    void initReviews() {
         if (reviews != null && reviews.size() > 0) {
             return;
         }
@@ -114,7 +116,7 @@ public class ReviewRepoTest {
 
     @Test
     @Order(1)
-    void saveVeredict() {
+    void saveReview() {
         for (Review v : reviews) {
             Review result = repo.save(v);
             assertEquals(v.getReviewId(), result.getReviewId());
@@ -124,7 +126,7 @@ public class ReviewRepoTest {
 
     @Test
     @Order(2)
-    void saveVeredictWithVeredictUserIdWrong() {
+    void saveReviewWithReviewUserIdWrong() {
         Review review = Review.builder()
                 .user(User.builder().userId(69L).build())
                 .movie(Movie.builder().movieId(1L).build())
@@ -140,7 +142,7 @@ public class ReviewRepoTest {
 
     @Test
     @Order(3)
-    void saveVeredictWithVeredictRepeatedIDS() {
+    void saveReviewWithReviewRepeatedIDS() {
         Review review = Review.builder()
                 .movie(movie)
                 .user(users.get(0))
@@ -158,7 +160,7 @@ public class ReviewRepoTest {
     
     @Test
     @Order(4)
-    void findAllVeredicts() {
+    void findAllReviews() {
         List<Review> ll = repo.findAll();
         assertEquals(2, ll.size());
         System.out.println("**********************");

@@ -64,6 +64,13 @@ public class WriteController {
         this.userService.saveUser(b);
         this.userService.saveUser(c);
 
+        Nationality nationA = new Nationality("USA");
+        Nationality nationB = new Nationality("Canada");
+        Nationality nationC = new Nationality("Spain");
+        //TODO: save list
+        this.nationService.saveNationality(nationA);
+        this.nationService.saveNationality(nationB);
+        this.nationService.saveNationality(nationC);
         // movies
         Movie mA = Movie.builder()
                 .originalTitle("仕事に行きたくない")
@@ -72,7 +79,7 @@ public class WriteController {
                 .userProposed(a)
                 .releaseYear("2015")
                 .nationalities(List.of(
-                        new Nationality("Japan")))
+                        nationA))
                 .build();
         Movie mB = Movie.builder()
                 .originalTitle("Party Party's")
@@ -81,8 +88,8 @@ public class WriteController {
                 .userProposed(b)
                 .releaseYear("1958")
                 .nationalities(List.of(
-                        new Nationality("USA"),
-                        new Nationality("Canada")))
+                        nationA,
+                        nationB))
                 .build();
 
         this.movieService.saveMovie(mA);

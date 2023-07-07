@@ -40,7 +40,7 @@ public class Review {
     private Long reviewId;
 
     @ManyToOne(cascade = {
-            CascadeType.REFRESH }, fetch = FetchType.LAZY)
+            CascadeType.REFRESH }, fetch = FetchType.EAGER)
     @JoinColumn(name = "movie_id", 
                 foreignKey = @ForeignKey(name = "fk_veredict_movie_id"), 
                 referencedColumnName = "movie_id")

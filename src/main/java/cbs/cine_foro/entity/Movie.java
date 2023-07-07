@@ -66,8 +66,7 @@ public class Movie {
 
     @ManyToMany(
             cascade = {
-                    CascadeType.MERGE,
-                    CascadeType.PERSIST},
+                    CascadeType.MERGE},
             fetch = FetchType.LAZY
     )
     @JoinColumn(

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.jpa.provider.HibernateUtils;
 import org.springframework.test.context.event.annotation.AfterTestClass;
 
 import cbs.cine_foro.entity.Movie;
@@ -110,6 +111,7 @@ public class MovieRepoTest {
     @Order(1)
     void saveMovieWithUser() {
         for (Movie m : movies) {
+            //Nationality n = this.setNationalities(null)
             Movie result = repo.save(m);
             assertEquals(m, result);
         }
