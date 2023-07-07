@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.aspectj.weaver.ast.Literal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,13 +93,13 @@ public class WriteController {
         Veredict vA = Veredict.builder()
                 .movie(mA)
                 .userVeredict(
-                        new VeredictUser(c, 8.5f, "Cuando pepote se cae", "La música", "LA escena final"))
+                        List.of(new VeredictUser(c, 8.5f, "Cuando pepote se cae", "La música", "LA escena final")))
                 .build();
 
         Veredict vb = Veredict.builder()
                 .movie(mA)
                 .userVeredict(
-                        new VeredictUser(b, 2.3f, "Las cortinas de zanahoria", "Eso de allí.", "Mascotas turbias"))
+                        List.of(new VeredictUser(b, 2.3f, "Las cortinas de zanahoria", "Eso de allí.", "Mascotas turbias")))
                 .build();
 
         this.veredictService.saveVeredict(vb);
@@ -230,7 +231,6 @@ public class WriteController {
         User u = this.userService.getUserById(veredict.getUserId());
         Veredict v = this.veredictModelToVeredict(veredict);
         v.setMovie(m);
-        v.getUserVeredict().setUser(u);
         return this.veredictService.saveVeredict(v);
     }
 

@@ -1,5 +1,7 @@
 package cbs.cine_foro.entity;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -56,8 +59,13 @@ public class Veredict {
     private Movie movie;
 
     // Ideally this should be an array 
-    @Embedded
-    private VeredictUser userVeredict;
+    //@Embedded
+    @OneToMany(
+        cascade = CascadeType.MERGE,
+        fetch = FetchType.EAGER,
+        mappedBy = "veredict_user"
+    )
+    private List<VeredictUser> userVeredict;
     
 
     
