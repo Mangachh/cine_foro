@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.aspectj.weaver.ast.Literal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,20 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
-import cbs.cine_foro.entity.Veredict;
-import cbs.cine_foro.entity.VeredictUser;
+import cbs.cine_foro.entity.Review;
 import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.NationalityNotExistsException;
 import cbs.cine_foro.error.UserAlreadyExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
-import cbs.cine_foro.error.VeredictMovieExistsException;
-import cbs.cine_foro.error.VeredictNotExistsException;
+import cbs.cine_foro.error.ReviewMovieExistsException;
+import cbs.cine_foro.error.ReviewNotExistsException;
 import cbs.cine_foro.model.MovieModel;
-import cbs.cine_foro.model.VeredictModel;
+import cbs.cine_foro.model.ReviewModel;
 import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
-import cbs.cine_foro.service.IVeredictService;
+import cbs.cine_foro.service.IReviewService;
 import jakarta.annotation.PostConstruct;
 import jakarta.websocket.server.PathParam;
 
@@ -53,11 +51,11 @@ public class WriteController {
     private INationService nationService;
 
     @Autowired
-    private IVeredictService veredictService;
+    private IReviewService reviewService;
 
     //dummy data
     @PostConstruct
-    public void dummyData() throws UserAlreadyExistsException, VeredictMovieExistsException {
+    public void dummyData() throws UserAlreadyExistsException, ReviewMovieExistsException {
         // create users
         User a = new User("Pepote");
         User b = new User("Mariela");
@@ -90,20 +88,26 @@ public class WriteController {
         this.movieService.saveMovie(mA);
         this.movieService.saveMovie(mB);
 
-        Veredict vA = Veredict.builder()
+        Review vA = Review.builder()
                 .movie(mA)
-                .userVeredict(
-                        List.of(new VeredictUser(c, 8.5f, "Cuando pepote se cae", "La música", "LA escena final")))
+                .user(a)
+                .bestMoment("Cuando Pepote se cae")
+                .worstMoment("Los pelillos de la nariz del prota")
+                .widow("La ventana rota")
+                .score(7.2f)                
                 .build();
 
-        Veredict vb = Veredict.builder()
+        Review vB = Review.builder()
                 .movie(mA)
-                .userVeredict(
-                        List.of(new VeredictUser(b, 2.3f, "Las cortinas de zanahoria", "Eso de allí.", "Mascotas turbias")))
+                .user(b)
+                .bestMoment("Baldosas de Bart simpson")
+                .worstMoment("Los caramelos de menta")
+                .widow("El techo que se desploma cuando Pepota estornuda")
+                .score(3.7f)                
                 .build();
 
-        this.veredictService.saveVeredict(vb);
-        this.veredictService.saveVeredict(vA);
+        this.reviewService.saveReview(vB);
+        this.reviewService.saveReview(vA);
     }
     
     // create/delete user
@@ -194,10 +198,10 @@ public class WriteController {
             @RequestBody final Movie movie) {
 
         // mmmm, don't know how to do it
-        Set<Veredict> nn = movie.getVeredicts();
+        Set<Review> nn = movie.getReviews();
         movie.setMovieId(id);
-        movie.getVeredicts().clear();
-        movie.setVeredicts(nn);
+        movie.getReviews().clear();
+        movie.setReviews(nn);
         this.movieService.saveMovie(movie);
         return this.movieService.saveMovie(movie);
     }
@@ -224,50 +228,50 @@ public class WriteController {
     }
 
     // create valid whatever
-    @PostMapping("veredict")
-    public Veredict createVeredict(@RequestBody final VeredictModel veredict)
-            throws MovieNotExistsException, UserNotExistsException, VeredictMovieExistsException {
-        Movie m = this.movieService.getMovieById(veredict.getMovieId());
-        User u = this.userService.getUserById(veredict.getUserId());
-        Veredict v = this.veredictModelToVeredict(veredict);
+    @PostMapping("review")
+    public Review createreview(@RequestBody final ReviewModel review)
+            throws MovieNotExistsException, UserNotExistsException, ReviewMovieExistsException {
+        Movie m = this.movieService.getMovieById(review.getMovieId());
+        User u = this.userService.getUserById(review.getUserId());
+        Review v = this.reviewModelToreview(review);
         v.setMovie(m);
-        return this.veredictService.saveVeredict(v);
+        return this.reviewService.saveReview(v);
     }
 
-    @DeleteMapping("veredict/{id}")
-    public void deleteVeredict(@PathVariable(name = "id") final Long id) {
-        this.veredictService.deleteVeredictById(id);
+    @DeleteMapping("review/{id}")
+    public void deletereview(@PathVariable(name = "id") final Long id) {
+        this.reviewService.deleteReviewById(id);
     }
 
-    @PutMapping("veredict/{id}")
-    public Veredict updateVeredict(@PathVariable(name = "id") final Long id,
-            @RequestBody final VeredictModel veredict) throws VeredictNotExistsException, MovieNotExistsException, UserNotExistsException, VeredictMovieExistsException {
+    @PutMapping("review/{id}")
+    public Review updatereview(@PathVariable(name = "id") final Long id,
+            @RequestBody final ReviewModel review) throws ReviewNotExistsException, MovieNotExistsException, UserNotExistsException, ReviewMovieExistsException {
         
-        Veredict old = this.veredictService.getVeredictById(id);
+        Review old = this.reviewService.getReviewById(id);
 
         // do the checks 'cause it's fastest
-        if (old.getMovie().getMovieId() != veredict.getMovieId()) {
-            old.setMovie(this.movieService.getMovieById(veredict.getMovieId()));
+        if (old.getMovie().getMovieId() != review.getMovieId()) {
+            old.setMovie(this.movieService.getMovieById(review.getMovieId()));
         }
 
-        if (old.getUserVeredict().getUser().getUserId() != veredict.getUserId()) {
-            old.getUserVeredict().setUser(this.userService.getUserById(veredict.getUserId()));
+        if (old.getUser().getUserId() != review.getUserId()) {
+            old.setUser(this.userService.getUserById(review.getUserId()));
         }
 
         // TODO: optimize?
-        old.getUserVeredict().setBestMoment(veredict.getBestMoment());
-        old.getUserVeredict().setWorstMoment(veredict.getWorstMoment());
-        old.getUserVeredict().setWidow(veredict.getWidow());
-        old.getUserVeredict().setScore(veredict.getScore());
+        old.setBestMoment(review.getBestMoment());
+        old.setWorstMoment(review.getWorstMoment());
+        old.setWidow(review.getWidow());
+        old.setScore(review.getScore());
         
-        return this.veredictService.saveVeredict(old);        
+        return this.reviewService.saveReview(old);        
     }
 
-    private Veredict veredictModelToVeredict(final VeredictModel veredict) {
-        VeredictUser verUser = VeredictUser.builder().score(veredict.getScore()).bestMoment(veredict.getBestMoment())
-                .worstMoment(veredict.getWorstMoment()).widow(veredict.getWidow()).build();
+    private Review reviewModelToreview(final ReviewModel reviewModel) {
+        Review review = Review.builder().score(reviewModel.getScore()).bestMoment(reviewModel.getBestMoment())
+                .worstMoment(reviewModel.getWorstMoment()).widow(reviewModel.getWidow()).build();
 
-        return Veredict.builder().userVeredict(verUser).build();
+        return review;
 
     }
 
@@ -275,7 +279,7 @@ public class WriteController {
     /*
      * create some model classes -> Works fine and it's easy to work with.
      * Now:
-     * - add a list of veredicts
+     * - add a list of reviews
      * - create web page
      * - security with the insert
      * 

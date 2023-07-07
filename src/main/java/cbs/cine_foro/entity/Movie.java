@@ -83,17 +83,17 @@ public class Movie {
                         CascadeType.REMOVE },
             fetch = FetchType.EAGER,
         orphanRemoval = true)
-    private Set<Veredict> veredicts = new HashSet<Veredict>();
+    private Set<Review> reviews = new HashSet<Review>();
     
     public float getAverage() {
-        if (veredicts == null || veredicts.size() == 0)
+        if (reviews == null || reviews.size() == 0)
             return -1f;
 
-        return (float) veredicts.stream().mapToDouble(v -> v.getUserVeredict().getScore()).sum() / veredicts.size();
+        return (float) reviews.stream().mapToDouble(v -> v.getScore()).sum() / reviews.size();
     }
     
-    public void setVeredicts(final Set<Veredict> veredicts) {
-        this.veredicts.addAll(veredicts);
+    public void setReviews(final Set<Review> veredicts) {
+        this.reviews.addAll(veredicts);
     }
 
     public void setNationalities(final List<Nationality> nationalities) {

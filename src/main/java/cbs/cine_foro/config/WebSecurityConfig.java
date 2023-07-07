@@ -25,8 +25,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // return this.simpleGetApply(http);
-        return this.permitWhiteList(http);
-        //return this.permitAll(http);
+        //return this.permitWhiteList(http);
+        return this.permitAll(http);
 
     }
     

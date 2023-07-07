@@ -1,13 +1,13 @@
 package cbs.cine_foro.error;
 
-public class VeredictNotExistsException extends Exception {
+public class ReviewNotExistsException extends Exception {
     private final static String MESSAGE = "Veredict not exists in the database";
 
-    public VeredictNotExistsException() {
+    public ReviewNotExistsException() {
         super(MESSAGE);
     }
 
-    public VeredictNotExistsException(final String message) {
+    public ReviewNotExistsException(final String message) {
         super(message);
     }
 }

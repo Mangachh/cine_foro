@@ -15,17 +15,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.User;
-import cbs.cine_foro.entity.Veredict;
-import cbs.cine_foro.entity.VeredictUser;
+import cbs.cine_foro.entity.Review;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootTest
 //@DataJpaTest
 @TestMethodOrder(OrderAnnotation.class)
-public class VeredictRepoTest {
+public class ReviewRepoTest {
 
     @Autowired
-    private VeredictRepo repo;
+    private ReviewRepo repo;
 
     @Autowired
     private UserRepo userRepo;
@@ -33,7 +32,7 @@ public class VeredictRepoTest {
     @Autowired
     private MovieRepo movieRepo;
 
-    private List<Veredict> veredicts;
+    private List<Review> reviews;
 
     private List<User> users;
 
@@ -83,14 +82,14 @@ public class VeredictRepoTest {
     }
 
     void initVeredicts() {
-        if (veredicts != null && veredicts.size() > 0) {
+        if (reviews != null && reviews.size() > 0) {
             return;
         }
 
-        veredicts = new ArrayList<>();
+        reviews = new ArrayList<>();
         
-        VeredictUser userOne = VeredictUser.builder()
-                //.userId(users.get(0))
+        Review userOne = Review.builder()
+                .movie(movie)
                 .score(7f)
                 .bestMoment("Cuando se caen")
                 .worstMoment("El final es horrible")
@@ -98,36 +97,27 @@ public class VeredictRepoTest {
                 .build();
             userOne.setUser(users.get(0));
 
-        VeredictUser userTwo = VeredictUser.builder()
-                //.userId(users.get(1))
+        Review userTwo = Review.builder()
+                .movie(movie)
                 .score(6f)
                 .bestMoment("El malo muere")
                 .worstMoment("La música")
                 .widow("Comer burritos durante el tiroteo")
                 .build();
             userTwo.setUser(users.get(1));
-        Veredict veredict = Veredict.builder()
-                .movie(movie)
-                .userVeredict(userTwo)
-                .build();
 
-        veredicts.add(veredict);
+        reviews.add(userOne);
 
-        veredict = Veredict.builder()
-                .movie(movie)
-                .userVeredict(userOne)
-                .build();
-
-        veredicts.add(veredict);
+        reviews.add(userTwo);
 
     }
 
     @Test
     @Order(1)
     void saveVeredict() {
-        for (Veredict v : veredicts) {
-            Veredict result = repo.save(v);
-            assertEquals(v.getVeredictId(), result.getVeredictId());
+        for (Review v : reviews) {
+            Review result = repo.save(v);
+            assertEquals(v.getReviewId(), result.getReviewId());
         }
     }
     
@@ -135,48 +125,41 @@ public class VeredictRepoTest {
     @Test
     @Order(2)
     void saveVeredictWithVeredictUserIdWrong() {
-        VeredictUser userOne = VeredictUser.builder()
+        Review review = Review.builder()
                 .user(User.builder().userId(69L).build())
+                .movie(Movie.builder().movieId(1L).build())
                 .score(7f)
                 .bestMoment("Cuando se caen")
                 .worstMoment("El final es horrible")
                 .widow("La sombra detrás a puerta")
                 .build();
 
-        Veredict veredict = Veredict.builder()
-                .movie(Movie.builder().movieId(1L).build())
-                .userVeredict(userOne)
-                .build();
-
-        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(veredict));
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(review));
         // repo.save(veredict); // exception
     }
 
     @Test
     @Order(3)
     void saveVeredictWithVeredictRepeatedIDS() {
-        VeredictUser userOne = VeredictUser.builder()
-                //.userId(users.get(0))
+        Review review = Review.builder()
+                .movie(movie)
+                .user(users.get(0))
                 .score(7f)
                 .bestMoment("Cuando se caen")
                 .worstMoment("El final es horrible")
                 .widow("La sombra detrás a puerta")
                 .build();
-        userOne.setUser(users.get(0));
+        //review.setUser(users.get(0));
 
-        Veredict veredict = Veredict.builder()
-                .movie(movie)
-                .userVeredict(userOne)
-                .build();
         List<Movie> movies = movieRepo.findAll();
 
-        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(veredict));
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> repo.save(review));
     }
     
     @Test
     @Order(4)
     void findAllVeredicts() {
-        List<Veredict> ll = repo.findAll();
+        List<Review> ll = repo.findAll();
         assertEquals(2, ll.size());
         System.out.println("**********************");
         System.out.println(ll);
@@ -186,21 +169,21 @@ public class VeredictRepoTest {
     @Test
     @Order(5)
     void findAllByUserId() {
-        List<Veredict> veredicts = repo.findAllByUserId(2L);
+        List<Review> veredicts = repo.findAllByUserId(2L);
         assertEquals(veredicts.size(), 1);
     }
 
     @Test
     @Order(6)
     void findAllByMovieId() {
-        List<Veredict> veredicts = repo.findAllByMovieId(1L);
+        List<Review> veredicts = repo.findAllByMovieId(1L);
         assertEquals(2, veredicts.size());
     }
 
     @Test
     @Order(7)
     void findAllByUserName() {
-        List<Veredict> vers = repo.findAllByUserName("Pepote");
+        List<Review> vers = repo.findAllByUserName("Pepote");
         System.out.println("**********************");
         System.out.println(vers);
         System.out.println("**********************");

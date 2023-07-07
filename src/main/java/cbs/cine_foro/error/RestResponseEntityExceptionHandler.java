@@ -40,15 +40,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return this.createResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
-    @ExceptionHandler(VeredictNotExistsException.class)
-    public ResponseEntity<ErrorMessage> veredictNotExistsException(VeredictNotExistsException exception,
+    @ExceptionHandler(ReviewNotExistsException.class)
+    public ResponseEntity<ErrorMessage> veredictNotExistsException(ReviewNotExistsException exception,
             WebRequest request) {
 
         return this.createResponseEntity(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
-    @ExceptionHandler(VeredictMovieExistsException.class)
-    public ResponseEntity<ErrorMessage> veredictMovieExistsExeption(VeredictMovieExistsException exception,
+    @ExceptionHandler(ReviewMovieExistsException.class)
+    public ResponseEntity<ErrorMessage> veredictMovieExistsExeption(ReviewMovieExistsException exception,
             WebRequest request) {
 
         return this.createResponseEntity(HttpStatus.BAD_REQUEST, exception.getMessage());

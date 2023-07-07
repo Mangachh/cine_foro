@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VeredictModel {
+public class ReviewModel {
     private Long userId;
     private Long movieId;
     private Float score;

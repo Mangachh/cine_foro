@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import cbs.cine_foro.entity.Movie;
 import cbs.cine_foro.entity.Nationality;
 import cbs.cine_foro.entity.User;
-import cbs.cine_foro.entity.Veredict;
+import cbs.cine_foro.entity.Review;
 import cbs.cine_foro.error.MovieNotExistsException;
 import cbs.cine_foro.error.UserNotExistsException;
-import cbs.cine_foro.error.VeredictNotExistsException;
+import cbs.cine_foro.error.ReviewNotExistsException;
 import cbs.cine_foro.service.IMovieService;
 import cbs.cine_foro.service.INationService;
 import cbs.cine_foro.service.IUserService;
-import cbs.cine_foro.service.IVeredictService;
+import cbs.cine_foro.service.IReviewService;
 import jakarta.websocket.server.PathParam;
 
 /*
@@ -40,7 +40,7 @@ public class ReadController {
     private INationService nationService;
 
     @Autowired
-    private IVeredictService veredictService;
+    private IReviewService reviewService;
 
     // read users
     @GetMapping("/user/{id}")
@@ -92,14 +92,14 @@ public class ReadController {
         return this.nationService.getAllNationalities();
     }
 
-    @GetMapping("veredicts")
-    public List<Veredict> getAllVeredicts() {
-        return this.veredictService.getAllVeredicts();
+    @GetMapping("reviews")
+    public List<Review> getAllReviews() {
+        return this.reviewService.getAllReviews();
     }
     
-    @GetMapping("veredict/movie/{id}")
-    public List<Veredict> getAllVeredictsByMovieId(@PathVariable(name = "id") final Long id) throws VeredictNotExistsException{
-        return this.veredictService.getVeredictsByMovieId(id);
+    @GetMapping("review/movie/{id}")
+    public List<Review> getAllreviewsByMovieId(@PathVariable(name = "id") final Long id) throws ReviewNotExistsException{
+        return this.reviewService.getAllReviewsByMovieId(id);
     }
 
 
