@@ -20,13 +20,21 @@ public class WebSecurityConfig {
     private static final boolean IS_DEBUG = true;
     private final JwtFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-    private final String[] WHITE_LIST = { "read/**", "auth/**", "console/**"};
+    private final String[] WHITE_LIST = { "read/**", "auth/**", "console/**" };
+    
+    enum Status {
+        ALLOW_ALL, ALLOW_WHITE, ALLOW_GET
+    };
+
+    private final Status CURRENT_STATUS = Status.ALLOW_WHITE;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // return this.simpleGetApply(http);
-        return this.permitWhiteList(http);
-        //return this.permitAll(http);
+        return switch (this.CURRENT_STATUS) {
+            case ALLOW_ALL -> this.permitAll(http);
+            case ALLOW_WHITE -> this.permitWhiteList(http);
+            case ALLOW_GET -> this.simpleGetApply(http);
+        }; 
 
     }
     
