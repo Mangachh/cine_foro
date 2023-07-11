@@ -112,9 +112,29 @@ public class WriteController {
                 .widow("El techo que se desploma cuando Pepota estornuda")
                 .score(3.7f)                
                 .build();
-
+        
+        Review vC = Review.builder()
+                    .movie(mB)
+                    .user(c)
+                    .bestMoment("Hola hola")
+                    .worstMoment("Adios adios")
+                    .widow("Yuhuuuu")
+                    .score(1.2f)
+                .build();
+        Review vD = Review.builder()
+                    .movie(mB)
+                    .user(b)
+                    .bestMoment("lalala")
+                    .worstMoment("cececeec")
+                    .widow("aadasda")
+                    .score(1.5f)
+                .build();
         this.reviewService.saveReview(vB);
         this.reviewService.saveReview(vA);
+        this.reviewService.saveReview(vC);
+        this.reviewService.saveReview(vD);
+
+        
     }
     
     // create/delete user

@@ -26,7 +26,7 @@ public class WebSecurityConfig {
         ALLOW_ALL, ALLOW_WHITE, ALLOW_GET
     };
 
-    private final Status CURRENT_STATUS = Status.ALLOW_WHITE;
+    private final Status CURRENT_STATUS = Status.ALLOW_ALL;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

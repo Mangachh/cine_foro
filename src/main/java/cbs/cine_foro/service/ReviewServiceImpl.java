@@ -100,4 +100,14 @@ public class ReviewServiceImpl implements IReviewService {
         return this.repo.findAll();
     }
 
+    @Override
+    public List<Review> getAllUserBestScore() {
+        return this.repo.findAllMaxScore();
+    }
+
+    @Override
+    public List<Review> getAllUserWorstScore() {
+        return this.repo.findAllWorstScore();
+    }
+
 }

@@ -36,7 +36,17 @@ public interface ReviewRepo extends JpaRepository<Review, Long> {
     // ?
     List<Review> findAllByUser(final User user);
     
-    
+    @Query(
+        value="SELECT * FROM reviews rs WHERE score = (SELECT MAX(score) FROM reviews WHERE user_id = rs.user_id)",
+        nativeQuery = true
+    )
+    List<Review> findAllMaxScore();
+
+    @Query(
+        value="SELECT * FROM reviews rs WHERE score = (SELECT MIN(score) FROM reviews WHERE user_id = rs.user_id)",
+        nativeQuery = true
+    )
+    List<Review> findAllWorstScore();
 
     
 }

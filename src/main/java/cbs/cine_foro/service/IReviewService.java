@@ -29,4 +29,8 @@ public interface IReviewService{
 
     List<Review> getAllReviews();
 
+    List<Review> getAllUserBestScore();
+
+    List<Review> getAllUserWorstScore();
+
 }

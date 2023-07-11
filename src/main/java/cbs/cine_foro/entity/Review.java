@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -55,6 +56,7 @@ public class Review {
                 foreignKey = @ForeignKey(name = "fk_veredict_user_id"), 
                 referencedColumnName = "user_id")
     private User user;
+
     private Float score;
     private String bestMoment;
     private String worstMoment;

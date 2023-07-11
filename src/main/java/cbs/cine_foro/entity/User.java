@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -41,8 +42,8 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
     private String name;
-
     
+
     public User(final String name) {
         this.name = name;
     }
